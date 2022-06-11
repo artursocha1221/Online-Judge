@@ -13,7 +13,7 @@ public class Test {
     private String input, output;
     private Long problemId;
 
-    public() {
+    public Test() {
     }
 
     public Test(String input, String output, Long problemId) {
