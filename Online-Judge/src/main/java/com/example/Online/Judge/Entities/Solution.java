@@ -23,27 +23,29 @@ public class Solution {
         this.results = results;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
     public void setCode(String code) {
         this.code = code;
     }
-
     public void setProblemId(Long problemId) {
         this.problemId = problemId;
     }
-
     public void setResults(String results) {
         this.results = results;
     }
 
+    public Long getId() {
+        return id;
+    }
     public String getCode() {
-        return this.code;
+        return code;
     }
-
     public Long getProblemId() {
-        return this.problemId;
+        return problemId;
     }
-
     public String getResults() {
-        return this.results;
+        return results;
     }
 }

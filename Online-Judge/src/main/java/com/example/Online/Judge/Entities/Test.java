@@ -22,27 +22,29 @@ public class Test {
         this.problemId = problemId;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
     public void setInput(String input) {
         this.input = input;
     }
-
     public void setOutput(String output) {
         this.output = output;
     }
-
     public void setProblemId(Long problemId) {
         this.problemId = problemId;
     }
 
+    public Long getId() {
+        return id;
+    }
     public String getInput() {
-        return this.input;
+        return input;
     }
-
     public String getOutput() {
-        return this.output;
+        return output;
     }
-
     public Long getProblemId() {
-        return this.problemId;
+        return problemId;
     }
 }

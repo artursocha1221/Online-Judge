@@ -19,11 +19,17 @@ public class Problem {
         this.statement = statement;
     }
 
-    public String getStatement() {
-        return this.statement;
+    public void setId(Long id) {
+        this.id = id;
     }
-
     public void setStatement(String statement) {
         this.statement = statement;
+    }
+
+    public Long getId() {
+        return id;
+    }
+    public String getStatement() {
+        return statement;
     }
 }
