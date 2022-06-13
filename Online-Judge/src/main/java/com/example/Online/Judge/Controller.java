@@ -1,5 +1,6 @@
 package com.example.Online.Judge;
 
+import com.example.Online.Judge.DTOs.SolutionDto;
 import com.example.Online.Judge.DTOs.TestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,5 +20,10 @@ public class Controller {
     @PostMapping("/test")
     public void addTest(@RequestBody TestDto testDto) {
         service.addTest(testDto.getInput(), testDto.getOutput(), testDto.getProblemId());
+    }
+
+    @PostMapping("/solution")
+    public void addSolution(@RequestBody SolutionDto solutionDto) {
+        service.addSolution(solutionDto.getCode(), solutionDto.getProblemId());
     }
 }

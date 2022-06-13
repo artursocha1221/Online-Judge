@@ -29,13 +29,22 @@ public class Service {
     public void addTest(String input, String output, Long problemId) {
         testRepo.save(new Test(input, output, problemId));
         ArrayList<Solution> solutions = solutionRepo.find(problemId);
-        for (int i = 0; i < solutions.size(); ++i)
-        {
+        for (int i = 0; i < solutions.size(); ++i) {
             Solution solution = solutions.get(i);
             String newResult = (new StringBuilder(solution.getResults()))
                     .append(testRunner.getResult(solution.getCode(), input, output))
                     .toString();
             solutionRepo.update(solution.getId(), newResult);
         }
+    }
+
+    public void addSolution(String code, Long problemId) {
+        ArrayList<Test> tests = testRepo.find(problemId);
+        StringBuilder result = new StringBuilder("");
+        for (int i = 0; i < tests.size(); ++i) {
+            Test test = tests.get(i);
+            result.append(testRunner.getResult(code, test.getInput(), test.getOutput()));
+        }
+        solutionRepo.save(new Solution(code, problemId, result.toString()));
     }
 }

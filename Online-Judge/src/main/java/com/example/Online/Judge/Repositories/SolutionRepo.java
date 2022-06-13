@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @Repository
 public interface SolutionRepo extends CrudRepository<Solution, Long> {
     @Query("SELECT s FROM Solution s WHERE s.problemId = ?1")
-    ArrayList<Solution> find(Long id);
+    ArrayList<Solution> find(Long problemId);
 
     @Transactional
     @Modifying
