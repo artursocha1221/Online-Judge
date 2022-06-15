@@ -1,16 +1,13 @@
 package com.example.Online.Judge;
 
-import org.springframework.stereotype.Component;
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Component
 public class TestRunner {
-    private final String partPath = "C:\\Users\\Artur\\Desktop\\enviroment\\";
+    private static final String partPath = "C:\\Users\\Artur\\Desktop\\enviroment\\";
 
-    private String normalise(String text) {
+    private static String normalise(String text) {
         int firstNonWhite = 0;
         while (text.charAt(firstNonWhite) < '!' || text.charAt(firstNonWhite) > '~')
             ++firstNonWhite;
@@ -28,7 +25,7 @@ public class TestRunner {
         return normalised.toString();
     }
 
-    private void createAndSave(String path, String content) {
+    private static void createAndSave(String path, String content) {
         try {
             FileWriter fileWriter = new FileWriter(path);
             fileWriter.write(content);
@@ -38,7 +35,7 @@ public class TestRunner {
         }
     }
 
-    private String readOutput(String path) {
+    private static String readOutput(String path) {
         StringBuilder stringBuilder = new StringBuilder("");
         try {
             FileReader fileReader = new FileReader(path);
@@ -54,7 +51,7 @@ public class TestRunner {
         return stringBuilder.toString();
     }
 
-    public String getResult(String code, String input, String output) {
+    public static String getResult(String code, String input, String output) {
         createAndSave(partPath + "code.cpp", code);
         createAndSave(partPath + "a.in", input);
         try {
@@ -69,6 +66,6 @@ public class TestRunner {
         } catch (IOException | InterruptedException e) {
             System.out.print("Script execution error");
         }
-        return (readOutput(partPath + "b.out").equals(output)) ? "Y" : "N";
+        return (normalise(readOutput(partPath + "b.out")).equals(output)) ? "Y" : "N";
     }
 }
