@@ -8,6 +8,9 @@ import com.example.Online.Judge.Repositories.ProblemRepo;
 import com.example.Online.Judge.Repositories.SolutionRepo;
 import com.example.Online.Judge.Repositories.TestRepo;
 import com.example.Online.Judge.Repositories.UserRepo;
+import com.example.Online.Judge.TestRunner.CppRunner;
+import com.example.Online.Judge.TestRunner.JavaRunner;
+import com.example.Online.Judge.TestRunner.LanguageRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +26,10 @@ public class Service {
     private SolutionRepo solutionRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private CppRunner cppRunner;
+    @Autowired
+    private JavaRunner javaRunner;
 
     public void addProblem(String statement) {
         problemRepo.save(new Problem(statement));
@@ -35,17 +42,23 @@ public class Service {
             Solution solution = solutions.get(i);
             if (!userRepo.isActive(solution.getUserId()))
                 continue;
-            String newResult = (new StringBuilder(solution.getResults()))
-                    .append(TestRunner.getResult(solution.getCode(), input, output))
-                    .toString();
+            String newResult;
+            if (solution.getLanguage().equals("cpp"))
+                newResult = (new StringBuilder(solution.getResults()))
+                        .append(cppRunner.getResult(solution.getCode(), input, output))
+                        .toString();
+            else
+                newResult = (new StringBuilder(solution.getResults()))
+                        .append(javaRunner.getResult(solution.getCode(), input, output))
+                        .toString();
             solutionRepo.update(solution.getId(), newResult);
         }
     }
 
-    public boolean addSolution(String code, Long problemId, Long userId) {
+    public boolean addSolution(String code, Long problemId, Long userId, String language) {
         if (!userRepo.isActive(userId))
             return false;
-        ArrayList<Long> cheaterId = solutionRepo.findCheater(code, problemId, userId);
+        ArrayList<Long> cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
         if (cheaterId.size() != 0) {
             userRepo.updateIsActive(cheaterId.get(0), false);
             userRepo.updateIsActive(userId, false);
@@ -55,9 +68,12 @@ public class Service {
         StringBuilder result = new StringBuilder("");
         for (int i = 0; i < tests.size(); ++i) {
             Test test = tests.get(i);
-            result.append(TestRunner.getResult(code, test.getInput(), test.getOutput()));
+            if (language.equals("cpp"))
+                result.append(cppRunner.getResult(code, test.getInput(), test.getOutput()));
+            else
+                result.append(javaRunner.getResult(code, test.getInput(), test.getOutput()));
         }
-        solutionRepo.save(new Solution(code, problemId, userId, result.toString()));
+        solutionRepo.save(new Solution(code, problemId, userId, language, result.toString()));
         return true;
     }
 

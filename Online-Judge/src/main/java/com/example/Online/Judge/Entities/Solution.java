@@ -13,15 +13,17 @@ public class Solution {
     private String code;
     private Long problemId;
     private Long userId;
+    private String language;
     private String results;
 
     public Solution() {
     }
 
-    public Solution(String code, Long problemId, Long userId, String results) {
+    public Solution(String code, Long problemId, Long userId, String language, String results) {
         this.code = code;
         this.problemId = problemId;
         this.userId = userId;
+        this.language = language;
         this.results = results;
     }
 
@@ -36,6 +38,9 @@ public class Solution {
     }
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+    public void setLanguage(String language) {
+        this.language = language;
     }
     public void setResults(String results) {
         this.results = results;
@@ -52,6 +57,9 @@ public class Solution {
     }
     public Long getUserId() {
         return userId;
+    }
+    public String getLanguage() {
+        return language;
     }
     public String getResults() {
         return results;

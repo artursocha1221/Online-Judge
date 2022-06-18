@@ -4,6 +4,7 @@ public class SolutionDto {
     private String code;
     private Long problemId;
     private Long userId;
+    private String language;
 
     public String getCode() {
         return code;
@@ -13,5 +14,8 @@ public class SolutionDto {
     }
     public Long getUserId() {
         return userId;
+    }
+    public String getLanguage() {
+        return language;
     }
 }

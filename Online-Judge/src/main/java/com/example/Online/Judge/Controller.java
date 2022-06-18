@@ -25,7 +25,7 @@ public class Controller {
 
     @PostMapping("/solution")
     public void addSolution(@RequestBody SolutionDto solutionDto) {
-        service.addSolution(solutionDto.getCode(), solutionDto.getProblemId(), solutionDto.getUserId());
+        service.addSolution(solutionDto.getCode(), solutionDto.getProblemId(), solutionDto.getUserId(), solutionDto.getLanguage());
     }
 
     @PostMapping("/user")

@@ -1,13 +1,16 @@
-package com.example.Online.Judge;
+package com.example.Online.Judge.TestRunner;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class TestRunner {
-    private static final String partPath = "C:\\Users\\Artur\\Desktop\\enviroment\\";
+abstract public class LanguageRunner {
+    private final String partPath = "C:\\Users\\Artur\\Desktop\\enviroment\\";
 
-    private static String normalise(String text) {
+    abstract String getCodeFile();
+    abstract String getStartFile();
+
+    private String normalise(String text) {
         int firstNonWhite = 0;
         while (text.charAt(firstNonWhite) < '!' || text.charAt(firstNonWhite) > '~')
             ++firstNonWhite;
@@ -25,7 +28,7 @@ public class TestRunner {
         return normalised.toString();
     }
 
-    private static void createAndSave(String path, String content) {
+    private void createAndSave(String path, String content) {
         try {
             FileWriter fileWriter = new FileWriter(path);
             fileWriter.write(content);
@@ -35,7 +38,7 @@ public class TestRunner {
         }
     }
 
-    private static String readOutput(String path) {
+    private String readOutput(String path) {
         StringBuilder stringBuilder = new StringBuilder("");
         try {
             FileReader fileReader = new FileReader(path);
@@ -51,18 +54,12 @@ public class TestRunner {
         return stringBuilder.toString();
     }
 
-    public static String getResult(String code, String input, String output) {
-        createAndSave(partPath + "code.cpp", code);
+    public String getResult(String code, String input, String output) {
+        createAndSave(partPath + getCodeFile(), code);
         createAndSave(partPath + "a.in", input);
         try {
-            Runtime.getRuntime().exec("cmd /c start " + partPath + "1.bat");
-            Thread.sleep(500);
-            Runtime.getRuntime().exec("cmd /c start " + partPath + "2.bat");
-            Thread.sleep(3000);
-            Runtime.getRuntime().exec("cmd /c start " + partPath + "3.bat");
-            Thread.sleep(500);
-            Runtime.getRuntime().exec("cmd /c start " + partPath + "4.bat");
-            Thread.sleep(500);
+            Runtime.getRuntime().exec("cmd /c start " + partPath + getStartFile());
+            Thread.sleep(4000);
         } catch (IOException | InterruptedException e) {
             System.out.print("Script execution error");
         }
