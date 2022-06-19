@@ -8,9 +8,6 @@ import com.example.Online.Judge.Repositories.ProblemRepo;
 import com.example.Online.Judge.Repositories.SolutionRepo;
 import com.example.Online.Judge.Repositories.TestRepo;
 import com.example.Online.Judge.Repositories.UserRepo;
-import com.example.Online.Judge.TestRunner.CppRunner;
-import com.example.Online.Judge.TestRunner.JavaRunner;
-import com.example.Online.Judge.TestRunner.LanguageRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,10 +23,6 @@ public class Service {
     private SolutionRepo solutionRepo;
     @Autowired
     private UserRepo userRepo;
-    @Autowired
-    private CppRunner cppRunner;
-    @Autowired
-    private JavaRunner javaRunner;
 
     public void addProblem(String statement) {
         problemRepo.save(new Problem(statement));
@@ -42,15 +35,9 @@ public class Service {
             Solution solution = solutions.get(i);
             if (!userRepo.isActive(solution.getUserId()))
                 continue;
-            String newResult;
-            if (solution.getLanguage().equals("cpp"))
-                newResult = (new StringBuilder(solution.getResults()))
-                        .append(cppRunner.getResult(solution.getCode(), input, output))
-                        .toString();
-            else
-                newResult = (new StringBuilder(solution.getResults()))
-                        .append(javaRunner.getResult(solution.getCode(), input, output))
-                        .toString();
+            String newResult = (new StringBuilder(solution.getResults()))
+                    .append(TestRunner.result(solution.getCode(), input, output, solution.getLanguage()))
+                    .toString();
             solutionRepo.update(solution.getId(), newResult);
         }
     }
@@ -68,10 +55,7 @@ public class Service {
         StringBuilder result = new StringBuilder("");
         for (int i = 0; i < tests.size(); ++i) {
             Test test = tests.get(i);
-            if (language.equals("cpp"))
-                result.append(cppRunner.getResult(code, test.getInput(), test.getOutput()));
-            else
-                result.append(javaRunner.getResult(code, test.getInput(), test.getOutput()));
+            result.append(TestRunner.result(code, test.getInput(), test.getOutput(), language));
         }
         solutionRepo.save(new Solution(code, problemId, userId, language, result.toString()));
         return true;

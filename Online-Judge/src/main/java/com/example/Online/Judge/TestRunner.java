@@ -1,16 +1,25 @@
-package com.example.Online.Judge.TestRunner;
+package com.example.Online.Judge;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-abstract public class LanguageRunner {
-    private final String partPath = "C:\\Users\\Artur\\Desktop\\enviroment\\";
+import java.util.HashMap;
+import java.util.Map;
 
-    abstract String getCodeFile();
-    abstract String getStartFile();
+public class TestRunner {
+    private static final String partPath = "C:\\Users\\Artur\\Desktop\\enviroment\\";
+    private static final Map<String, String> codeFile = new HashMap<>();
+    private static final Map<String, String> startFile = new HashMap<>();
 
-    private String normalise(String text) {
+    static {
+        codeFile.put("cpp", "code.cpp");
+        codeFile.put("java", "Main.java");
+        startFile.put("cpp", "cppstart.bat");
+        startFile.put("java", "javastart.bat");
+    }
+
+    private static String normalise(String text) {
         int firstNonWhite = 0;
         while (text.charAt(firstNonWhite) < '!' || text.charAt(firstNonWhite) > '~')
             ++firstNonWhite;
@@ -28,7 +37,7 @@ abstract public class LanguageRunner {
         return normalised.toString();
     }
 
-    private void createAndSave(String path, String content) {
+    private static void createAndSave(String path, String content) {
         try {
             FileWriter fileWriter = new FileWriter(path);
             fileWriter.write(content);
@@ -38,7 +47,7 @@ abstract public class LanguageRunner {
         }
     }
 
-    private String readOutput(String path) {
+    private static String readOutput(String path) {
         StringBuilder stringBuilder = new StringBuilder("");
         try {
             FileReader fileReader = new FileReader(path);
@@ -54,11 +63,11 @@ abstract public class LanguageRunner {
         return stringBuilder.toString();
     }
 
-    public String getResult(String code, String input, String output) {
-        createAndSave(partPath + getCodeFile(), code);
+    public static String result(String code, String input, String output, String language) {
+        createAndSave(partPath + codeFile.get(language), code);
         createAndSave(partPath + "a.in", input);
         try {
-            Runtime.getRuntime().exec("cmd /c start " + partPath + getStartFile());
+            Runtime.getRuntime().exec("cmd /c start " + partPath + startFile.get(language));
             Thread.sleep(4000);
         } catch (IOException | InterruptedException e) {
             System.out.print("Script execution error");
