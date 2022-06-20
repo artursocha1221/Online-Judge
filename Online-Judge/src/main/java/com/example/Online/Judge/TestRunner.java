@@ -19,19 +19,25 @@ public class TestRunner {
         startFile.put("java", "javastart.bat");
     }
 
-    private static String normalise(String text) {
+    private static boolean isWhite(char c) {
+        return !(c >= '!' && c <= '~');
+    }
+
+    public static String normalise(String text) {
         int firstNonWhite = 0;
-        while (text.charAt(firstNonWhite) < '!' || text.charAt(firstNonWhite) > '~')
+        while (isWhite(text.charAt(firstNonWhite)))
             ++firstNonWhite;
         int lastNonWhite = text.length() - 1;
-        while (text.charAt(lastNonWhite) < '!' || text.charAt(lastNonWhite) > '~')
+        while (isWhite(text.charAt(lastNonWhite)))
             --lastNonWhite;
         StringBuilder normalised = new StringBuilder("");
         for (int i = firstNonWhite; i <= lastNonWhite; ++i) {
             char c = text.charAt(i);
-            if (c >= '!' && c <= '~')
-                normalised.append(c);
-            if (c == ' ' && normalised.charAt(normalised.capacity() - 1) != ' ')
+            if (isWhite(c)) {
+                if (!isWhite(normalised.charAt(normalised.length() - 1)))
+                    normalised.append(' ');
+            }
+            else
                 normalised.append(c);
         }
         return normalised.toString();
@@ -72,6 +78,6 @@ public class TestRunner {
         } catch (IOException | InterruptedException e) {
             System.out.print("Script execution error");
         }
-        return (normalise(readOutput(partPath + "b.out")).equals(output)) ? "Y" : "N";
+        return (normalise(readOutput(partPath + "b.out")).equals(normalise(output))) ? "Y" : "N";
     }
 }

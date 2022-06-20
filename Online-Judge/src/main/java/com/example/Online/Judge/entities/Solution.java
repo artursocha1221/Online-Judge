@@ -1,4 +1,4 @@
-package com.example.Online.Judge.Entities;
+package com.example.Online.Judge.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

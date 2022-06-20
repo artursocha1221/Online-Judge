@@ -1,6 +1,6 @@
-package com.example.Online.Judge.Repositories;
+package com.example.Online.Judge.repositories;
 
-import com.example.Online.Judge.Entities.User;
+import com.example.Online.Judge.entities.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

@@ -1,4 +1,4 @@
-package com.example.Online.Judge.DTOs;
+package com.example.Online.Judge.dtos;
 
 public class TestDto {
     private String input, output;

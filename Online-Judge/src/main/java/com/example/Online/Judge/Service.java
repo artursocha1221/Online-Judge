@@ -1,13 +1,13 @@
 package com.example.Online.Judge;
 
-import com.example.Online.Judge.Entities.Problem;
-import com.example.Online.Judge.Entities.Solution;
-import com.example.Online.Judge.Entities.Test;
-import com.example.Online.Judge.Entities.User;
-import com.example.Online.Judge.Repositories.ProblemRepo;
-import com.example.Online.Judge.Repositories.SolutionRepo;
-import com.example.Online.Judge.Repositories.TestRepo;
-import com.example.Online.Judge.Repositories.UserRepo;
+import com.example.Online.Judge.entities.Problem;
+import com.example.Online.Judge.entities.Solution;
+import com.example.Online.Judge.entities.Test;
+import com.example.Online.Judge.entities.User;
+import com.example.Online.Judge.repositories.ProblemRepo;
+import com.example.Online.Judge.repositories.SolutionRepo;
+import com.example.Online.Judge.repositories.TestRepo;
+import com.example.Online.Judge.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,8 +1,8 @@
 package com.example.Online.Judge;
 
-import com.example.Online.Judge.DTOs.SolutionDto;
-import com.example.Online.Judge.DTOs.TestDto;
-import com.example.Online.Judge.DTOs.UserDto;
+import com.example.Online.Judge.dtos.SolutionDto;
+import com.example.Online.Judge.dtos.TestDto;
+import com.example.Online.Judge.dtos.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
