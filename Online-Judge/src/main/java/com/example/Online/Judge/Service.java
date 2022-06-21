@@ -1,5 +1,6 @@
 package com.example.Online.Judge;
 
+import com.example.Online.Judge.dtos.ProblemDto;
 import com.example.Online.Judge.entities.Problem;
 import com.example.Online.Judge.entities.Solution;
 import com.example.Online.Judge.entities.Test;
@@ -24,12 +25,22 @@ public class Service {
     @Autowired
     private UserRepo userRepo;
 
-    public void addProblem(String statement) {
-        problemRepo.save(new Problem(statement));
+    boolean isExpectedRole(Long id, String role) {
+        return userRepo.role(id).equals(role);
     }
 
-    public void addTest(String input, String output, Long problemId) {
-        testRepo.save(new Test(input, output, problemId));
+    public boolean addProblem(String statement, Long userId) {
+        if (isExpectedRole(userId, "admin")) {
+            problemRepo.save(new Problem(statement, userId));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addTest(String input, String output, Long problemId, Long userId) {
+        if (!isExpectedRole(userId, "admin"))
+            return false;
+        testRepo.save(new Test(input, output, problemId, userId));
         ArrayList<Solution> solutions = solutionRepo.find(problemId);
         for (int i = 0; i < solutions.size(); ++i) {
             Solution solution = solutions.get(i);
@@ -40,10 +51,11 @@ public class Service {
                     .toString();
             solutionRepo.update(solution.getId(), newResult);
         }
+        return true;
     }
 
     public boolean addSolution(String code, Long problemId, Long userId, String language) {
-        if (!userRepo.isActive(userId))
+        if (!isExpectedRole(userId, "participant") || !userRepo.isActive(userId))
             return false;
         ArrayList<Long> cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
         if (cheaterId.size() != 0) {
@@ -61,7 +73,8 @@ public class Service {
         return true;
     }
 
-    public void addUser(String nickname, String email) {
-        userRepo.save(new User(nickname, email, true));
+    public boolean addUser(String nickname, String email, String role) {
+        userRepo.save(new User(nickname, email, role, true));
+        return true;
     }
 }

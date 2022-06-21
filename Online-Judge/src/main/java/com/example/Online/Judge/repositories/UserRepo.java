@@ -17,4 +17,7 @@ public interface UserRepo extends CrudRepository<User, Long> {
     @Modifying
     @Query("UPDATE User u SET u.isActive = ?2 WHERE u.id = ?1")
     void updateIsActive(Long id, Boolean isActive);
+
+    @Query("SELECT u.role FROM User u WHERE u.id = ?1")
+    String role(Long id);
 }

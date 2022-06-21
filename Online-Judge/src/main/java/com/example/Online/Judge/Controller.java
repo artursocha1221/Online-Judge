@@ -1,5 +1,6 @@
 package com.example.Online.Judge;
 
+import com.example.Online.Judge.dtos.ProblemDto;
 import com.example.Online.Judge.dtos.SolutionDto;
 import com.example.Online.Judge.dtos.TestDto;
 import com.example.Online.Judge.dtos.UserDto;
@@ -14,13 +15,13 @@ public class Controller {
     private Service service;
 
     @PostMapping("/problem")
-    public void addProblem(@RequestBody String statement) {
-        service.addProblem(statement);
+    public void addProblem(@RequestBody ProblemDto problemDto) {
+        service.addProblem(problemDto.getStatement(), problemDto.getUserId());
     }
 
     @PostMapping("/test")
     public void addTest(@RequestBody TestDto testDto) {
-        service.addTest(testDto.getInput(), testDto.getOutput(), testDto.getProblemId());
+        service.addTest(testDto.getInput(), testDto.getOutput(), testDto.getProblemId(), testDto.getUserId());
     }
 
     @PostMapping("/solution")
@@ -30,6 +31,6 @@ public class Controller {
 
     @PostMapping("/user")
     public void addUser(@RequestBody UserDto userDto) {
-        service.addUser(userDto.getNickname(), userDto.getEmail());
+        service.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());
     }
 }

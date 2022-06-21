@@ -12,14 +12,16 @@ public class User {
     private Long id;
     private String nickname;
     private String email;
+    private String role;
     private Boolean isActive;
 
     public User() {
     }
 
-    public User(String nickname, String email, Boolean isActive) {
+    public User(String nickname, String email, String role, Boolean isActive) {
         this.nickname = nickname;
         this.email = email;
+        this.role = role;
         this.isActive = isActive;
     }
 
@@ -31,6 +33,9 @@ public class User {
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+    public void setRole(String role) {
+        this.role = role;
     }
     public void setActive(Boolean isActive) {
         this.isActive = isActive;
@@ -44,6 +49,9 @@ public class User {
     }
     public String getEmail() {
         return email;
+    }
+    public String getRole() {
+        return role;
     }
     public Boolean getIsActive() {
         return isActive;

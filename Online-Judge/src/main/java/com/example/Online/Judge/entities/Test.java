@@ -12,14 +12,16 @@ public class Test {
     private Long id;
     private String input, output;
     private Long problemId;
+    private Long userId;
 
     public Test() {
     }
 
-    public Test(String input, String output, Long problemId) {
+    public Test(String input, String output, Long problemId, Long userId) {
         this.input = input;
         this.output = output;
         this.problemId = problemId;
+        this.userId = userId;
     }
 
     public void setId(Long id) {
@@ -34,6 +36,9 @@ public class Test {
     public void setProblemId(Long problemId) {
         this.problemId = problemId;
     }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public Long getId() {
         return id;
@@ -46,5 +51,8 @@ public class Test {
     }
     public Long getProblemId() {
         return problemId;
+    }
+    public Long getUserId() {
+        return userId;
     }
 }

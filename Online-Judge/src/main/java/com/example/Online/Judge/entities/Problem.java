@@ -11,12 +11,14 @@ public class Problem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String statement;
+    private Long userId;
 
     public Problem() {
     }
 
-    public Problem(String statement) {
+    public Problem(String statement, Long userId) {
         this.statement = statement;
+        this.userId = userId;
     }
 
     public void setId(Long id) {
@@ -25,11 +27,17 @@ public class Problem {
     public void setStatement(String statement) {
         this.statement = statement;
     }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public Long getId() {
         return id;
     }
     public String getStatement() {
         return statement;
+    }
+    public Long getUserId() {
+        return userId;
     }
 }
