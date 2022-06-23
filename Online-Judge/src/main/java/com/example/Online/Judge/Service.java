@@ -5,6 +5,9 @@ import com.example.Online.Judge.entities.Problem;
 import com.example.Online.Judge.entities.Solution;
 import com.example.Online.Judge.entities.Test;
 import com.example.Online.Judge.entities.User;
+import com.example.Online.Judge.exceptions.NoProblemException;
+import com.example.Online.Judge.exceptions.NoUserException;
+import com.example.Online.Judge.exceptions.WrongRoleException;
 import com.example.Online.Judge.repositories.ProblemRepo;
 import com.example.Online.Judge.repositories.SolutionRepo;
 import com.example.Online.Judge.repositories.TestRepo;
@@ -12,6 +15,7 @@ import com.example.Online.Judge.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 
 @Component
@@ -29,17 +33,23 @@ public class Service {
         return userRepo.role(id).equals(role);
     }
 
-    public boolean addProblem(String statement, Long userId) {
-        if (isExpectedRole(userId, "admin")) {
-            problemRepo.save(new Problem(statement, userId));
-            return true;
-        }
-        return false;
+    public void addProblem(String statement, Long userId)
+            throws AccessDeniedException, NoUserException {
+        if (userRepo.doesIdExist(userId) == null)
+            throw new NoUserException("User with id = " + userId + " does not exist.");
+        if (!isExpectedRole(userId, "admin"))
+            throw new AccessDeniedException("You are not permitted to add new problems.");
+        problemRepo.save(new Problem(statement, userId));
     }
 
-    public boolean addTest(String input, String output, Long problemId, Long userId) {
+    public void addTest(String input, String output, Long problemId, Long userId)
+            throws AccessDeniedException, NoUserException, NoProblemException {
+        if (userRepo.doesIdExist(userId) == null)
+            throw new NoUserException("User with id = " + userId + " does not exist.");
+        if (problemRepo.doesIdExist(problemId) == null)
+            throw new NoProblemException("Problem with id = " + problemId + " does not exist.");
         if (!isExpectedRole(userId, "admin"))
-            return false;
+            throw new AccessDeniedException("You are not permitted to add new tests.");
         testRepo.save(new Test(input, output, problemId, userId));
         ArrayList<Solution> solutions = solutionRepo.find(problemId);
         for (int i = 0; i < solutions.size(); ++i) {
@@ -51,7 +61,6 @@ public class Service {
                     .toString();
             solutionRepo.update(solution.getId(), newResult);
         }
-        return true;
     }
 
     public boolean addSolution(String code, Long problemId, Long userId, String language) {
@@ -73,8 +82,9 @@ public class Service {
         return true;
     }
 
-    public boolean addUser(String nickname, String email, String role) {
+    public void addUser(String nickname, String email, String role) throws WrongRoleException {
+        if (!role.equals("admin") && !role.equals("participant"))
+            throw new WrongRoleException("Role " + role + " is incorrect.");
         userRepo.save(new User(nickname, email, role, true));
-        return true;
     }
 }

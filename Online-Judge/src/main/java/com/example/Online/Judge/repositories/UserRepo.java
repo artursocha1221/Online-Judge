@@ -20,4 +20,7 @@ public interface UserRepo extends CrudRepository<User, Long> {
 
     @Query("SELECT u.role FROM User u WHERE u.id = ?1")
     String role(Long id);
+
+    @Query("SELECT u.id FROM User u WHERE u.id = ?1")
+    Long doesIdExist(Long id);
 }

@@ -1,9 +1,12 @@
 package com.example.Online.Judge.repositories;
 
 import com.example.Online.Judge.entities.Problem;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProblemRepo extends CrudRepository<Problem, Long> {
+    @Query("SELECT p.id FROM Problem p WHERE p.id = ?1")
+    Long doesIdExist(Long id);
 }
