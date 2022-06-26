@@ -8,6 +8,8 @@ import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.IncorrectAttributeException;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,39 +19,71 @@ public class Controller {
     @Autowired
     private Service service;
 
+    private final ResponseEntity<String> OK = new ResponseEntity<String>(HttpStatus.OK);
+    private final ResponseEntity<String> CREATED = new ResponseEntity<String>(HttpStatus.CREATED);
+    private final ResponseEntity<String> BAD_REQUEST = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+    private final ResponseEntity<String> FORBIDDEN = new ResponseEntity<String>(HttpStatus.FORBIDDEN);
+    private final ResponseEntity<String> NOT_FOUND = new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+
+    private ResponseEntity<String> response;
+
     @PostMapping("/problem")
-    public void addProblem(@RequestBody ProblemDto problemDto) {
+    public ResponseEntity<String> addProblem(@RequestBody ProblemDto problemDto) {
+        response = CREATED;
         try {
             service.addProblem(problemDto.getStatement(), problemDto.getUserId());
-        } catch (NoEntityException | AccessDenied2Exception e) {
+        } catch (NoEntityException e) {
+            response = NOT_FOUND;
+            System.out.println(e.getMessage());
+        } catch (AccessDenied2Exception e) {
+            response = FORBIDDEN;
             System.out.println(e.getMessage());
         }
+        return response;
     }
 
     @PostMapping("/test")
-    public void addTest(@RequestBody TestDto testDto) {
+    public ResponseEntity<String> addTest(@RequestBody TestDto testDto) {
+        response = CREATED;
         try {
             service.addTest(testDto.getInput(), testDto.getOutput(), testDto.getProblemId(), testDto.getUserId());
-        } catch (NoEntityException | AccessDenied2Exception e) {
+        } catch (NoEntityException e) {
+            response = NOT_FOUND;
+            System.out.println(e.getMessage());
+        } catch (AccessDenied2Exception e) {
+            response = FORBIDDEN;
             System.out.println(e.getMessage());
         }
+        return response;
     }
 
     @PostMapping("/solution")
-    public void addSolution(@RequestBody SolutionDto solutionDto) {
+    public ResponseEntity<String> addSolution(@RequestBody SolutionDto solutionDto) {
+        response = CREATED;
         try {
             service.addSolution(solutionDto.getCode(), solutionDto.getProblemId(), solutionDto.getUserId(), solutionDto.getLanguage());
-        } catch (NoEntityException | IncorrectAttributeException | AccessDenied2Exception e) {
+        } catch (NoEntityException e) {
+            response = NOT_FOUND;
+            System.out.println(e.getMessage());
+        } catch (IncorrectAttributeException e) {
+            response = BAD_REQUEST;
+            System.out.println(e.getMessage());
+        } catch (AccessDenied2Exception e) {
+            response = FORBIDDEN;
             System.out.println(e.getMessage());
         }
+        return response;
     }
 
     @PostMapping("/user")
-    public void addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<String> addUser(@RequestBody UserDto userDto) {
+        response = CREATED;
         try {
             service.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());
         } catch (IncorrectAttributeException e) {
+            response = BAD_REQUEST;
             System.out.println(e.getMessage());
         }
+        return response;
     }
 }
