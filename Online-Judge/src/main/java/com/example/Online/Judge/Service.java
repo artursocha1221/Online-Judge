@@ -1,5 +1,6 @@
 package com.example.Online.Judge;
 
+import com.example.Online.Judge.dtos.ScoreboardDto;
 import com.example.Online.Judge.entities.Problem;
 import com.example.Online.Judge.entities.Solution;
 import com.example.Online.Judge.entities.Test;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class Service {
@@ -52,8 +55,7 @@ public class Service {
 
         testRepo.save(new Test(input, output, problemId, userId));
         ArrayList<Solution> solutions = solutionRepo.find(problemId);
-        for (int i = 0; i < solutions.size(); ++i) {
-            Solution solution = solutions.get(i);
+        for (Solution solution : solutions) {
             if (!userRepo.isActive(solution.getUserId()))
                 continue;
             String newResult = (new StringBuilder(solution.getResults()))
@@ -82,10 +84,8 @@ public class Service {
         }
         ArrayList<Test> tests = testRepo.find(problemId);
         StringBuilder result = new StringBuilder("");
-        for (int i = 0; i < tests.size(); ++i) {
-            Test test = tests.get(i);
+        for (Test test : tests)
             result.append(TestRunner.result(code, test.getInput(), test.getOutput(), language));
-        }
         solutionRepo.save(new Solution(code, problemId, userId, language, result.toString()));
     }
 
@@ -95,5 +95,32 @@ public class Service {
             throw new IncorrectAttributeException("Role", role);
 
         userRepo.save(new User(nickname, email, role, true));
+    }
+
+    public List<ScoreboardDto> getScoreboard() {
+        List<Long> problemsId = problemRepo.findAllId();
+        HashMap<Long, Integer> scoreboard = new HashMap<Long, Integer>();
+        for (Long problemId : problemsId) {
+            long totalTests = testRepo.findNumberOfTestsById(problemId);
+            StringBuilder resultPattern = new StringBuilder("");
+            for (int j = 0; j < totalTests; ++j)
+                resultPattern.append("Y");
+            List<Long> participantsWhoSolved = solutionRepo.findIdsWhoSolved(problemId, resultPattern.toString());
+            for (Long participantWhoSolved : participantsWhoSolved) {
+                if (scoreboard.containsKey(participantWhoSolved))
+                    scoreboard.put(participantWhoSolved, scoreboard.get(participantWhoSolved) + 1);
+                else
+                    scoreboard.put(participantWhoSolved, 1);
+            }
+        }
+        List<Long> usersId = userRepo.findAllParticipantsId();
+        List<ScoreboardDto> scoreboardDto = new ArrayList<ScoreboardDto>();
+        for (Long userId : usersId) {
+            if (scoreboard.containsKey(userId))
+                scoreboardDto.add(new ScoreboardDto(userId, scoreboard.get(userId)));
+            else
+                scoreboardDto.add(new ScoreboardDto(userId, 0));
+        }
+        return scoreboardDto;
     }
 }

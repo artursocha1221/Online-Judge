@@ -1,18 +1,18 @@
 package com.example.Online.Judge;
 
-import com.example.Online.Judge.dtos.ProblemDto;
-import com.example.Online.Judge.dtos.SolutionDto;
-import com.example.Online.Judge.dtos.TestDto;
-import com.example.Online.Judge.dtos.UserDto;
+import com.example.Online.Judge.dtos.*;
 import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.IncorrectAttributeException;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class Controller {
@@ -85,5 +85,10 @@ public class Controller {
             System.out.println(e.getMessage());
         }
         return response;
+    }
+
+    @GetMapping("/scoreboard")
+    public List<ScoreboardDto> getScoreboard() {
+        return service.getScoreboard();
     }
 }

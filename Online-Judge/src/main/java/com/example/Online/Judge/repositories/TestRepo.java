@@ -11,4 +11,7 @@ import java.util.ArrayList;
 public interface TestRepo extends CrudRepository<Test, Long> {
     @Query("SELECT t FROM Test t WHERE t.problemId = ?1")
     ArrayList<Test> find(Long problemId);
+
+    @Query("SELECT COUNT(*) FROM Test t WHERE t.problemId = ?1")
+    Long findNumberOfTestsById(Long problemId);
 }
