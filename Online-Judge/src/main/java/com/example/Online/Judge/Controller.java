@@ -88,7 +88,7 @@ public class Controller {
     }
 
     @GetMapping("/scoreboard")
-    public List<ScoreboardDto> getScoreboard() {
-        return service.getScoreboard();
+    public ResponseEntity<List<ScoreboardDto>> getScoreboard() {
+        return new ResponseEntity<List<ScoreboardDto>>(service.getScoreboard(), HttpStatus.OK);
     }
 }
