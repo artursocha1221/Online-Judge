@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface ProblemRepo extends CrudRepository<Problem, Long> {
     @Query("SELECT p.id FROM Problem p WHERE p.id = ?1")
-    Long doesIdExist(Long id);
+    Long findIdById(Long id);
 
     @Query("SELECT p.id FROM Problem p")
-    List<Long> findAllId();
+    List<Long> findAllIds();
 }

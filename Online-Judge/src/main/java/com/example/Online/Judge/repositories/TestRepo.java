@@ -10,8 +10,8 @@ import java.util.ArrayList;
 @Repository
 public interface TestRepo extends CrudRepository<Test, Long> {
     @Query("SELECT t FROM Test t WHERE t.problemId = ?1")
-    ArrayList<Test> find(Long problemId);
+    ArrayList<Test> findTestsByProblemId(Long problemId);
 
     @Query("SELECT COUNT(*) FROM Test t WHERE t.problemId = ?1")
-    Long findNumberOfTestsById(Long problemId);
+    Long findNumberOfTestsByProblemId(Long problemId);
 }

@@ -12,19 +12,19 @@ import java.util.ArrayList;
 @Repository
 public interface UserRepo extends CrudRepository<User, Long> {
     @Query("SELECT u.isActive FROM User u WHERE u.id = ?1")
-    Boolean isActive(Long id);
+    Boolean isActiveById(Long id);
 
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u.isActive = ?2 WHERE u.id = ?1")
-    void updateIsActive(Long id, Boolean isActive);
+    void updateIsActiveById(Long id, Boolean isActive);
 
     @Query("SELECT u.role FROM User u WHERE u.id = ?1")
-    String role(Long id);
+    String findRoleById(Long id);
 
     @Query("SELECT u.id FROM User u WHERE u.id = ?1")
-    Long doesIdExist(Long id);
+    Long findIdById(Long id);
 
     @Query("SELECT u.id FROM User u WHERE u.role = 'participant'")
-    ArrayList<Long> findAllParticipantsId();
+    ArrayList<Long> findIdsForAllParticipants();
 }

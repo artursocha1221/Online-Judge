@@ -15,9 +15,7 @@ import com.example.Online.Judge.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class Service {
@@ -30,13 +28,23 @@ public class Service {
     @Autowired
     private UserRepo userRepo;
 
+    private final Set<String> languages = new HashSet<>();
+    private final Set<String> roles = new HashSet<>();
+
+    Service() {
+        languages.add("java");
+        languages.add("cpp");
+        roles.add("admin");
+        roles.add("participant");
+    }
+
     boolean isExpectedRole(Long id, String role) {
-        return userRepo.role(id).equals(role);
+        return userRepo.findRoleById(id).equals(role);
     }
 
     public void addProblem(String statement, Long userId)
             throws AccessDenied2Exception, NoEntityException {
-        if (userRepo.doesIdExist(userId) == null)
+        if (userRepo.findIdById(userId) == null)
             throw new NoEntityException("User", userId);
         if (!isExpectedRole(userId, "admin"))
             throw new AccessDenied2Exception("problem");
@@ -46,43 +54,43 @@ public class Service {
 
     public void addTest(String input, String output, Long problemId, Long userId)
             throws AccessDenied2Exception, NoEntityException {
-        if (userRepo.doesIdExist(userId) == null)
+        if (userRepo.findIdById(userId) == null)
             throw new NoEntityException("User", userId);
-        if (problemRepo.doesIdExist(problemId) == null)
+        if (problemRepo.findIdById(problemId) == null)
             throw new NoEntityException("Problem", problemId);
         if (!isExpectedRole(userId, "admin"))
             throw new AccessDenied2Exception("test");
 
         testRepo.save(new Test(input, output, problemId, userId));
-        ArrayList<Solution> solutions = solutionRepo.find(problemId);
+        ArrayList<Solution> solutions = solutionRepo.findSolutionsByProblemId(problemId);
         for (Solution solution : solutions) {
-            if (!userRepo.isActive(solution.getUserId()))
+            if (!userRepo.isActiveById(solution.getUserId()))
                 continue;
             String newResult = (new StringBuilder(solution.getResults()))
                     .append(TestRunner.result(solution.getCode(), input, output, solution.getLanguage()))
                     .toString();
-            solutionRepo.update(solution.getId(), newResult);
+            solutionRepo.updateResultsById(solution.getId(), newResult);
         }
     }
 
     public void addSolution(String code, Long problemId, Long userId, String language)
             throws NoEntityException, IncorrectAttributeException, AccessDenied2Exception {
-        if (userRepo.doesIdExist(userId) == null)
+        if (userRepo.findIdById(userId) == null)
             throw new NoEntityException("User", userId);
-        if (problemRepo.doesIdExist(problemId) == null)
+        if (problemRepo.findIdById(problemId) == null)
             throw new NoEntityException("Problem", problemId);
-        if (!language.equals("cpp") && !language.equals("java"))
+        if (!language.contains(language))
             throw new IncorrectAttributeException("Language", language);
-        if (!isExpectedRole(userId, "participant") || !userRepo.isActive(userId))
+        if (!isExpectedRole(userId, "participant") || !userRepo.isActiveById(userId))
             throw new AccessDenied2Exception("solution");
 
         ArrayList<Long> cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
         if (cheaterId.size() != 0) {
-            userRepo.updateIsActive(cheaterId.get(0), false);
-            userRepo.updateIsActive(userId, false);
+            userRepo.updateIsActiveById(cheaterId.get(0), false);
+            userRepo.updateIsActiveById(userId, false);
             throw new AccessDenied2Exception("solution");
         }
-        ArrayList<Test> tests = testRepo.find(problemId);
+        ArrayList<Test> tests = testRepo.findTestsByProblemId(problemId);
         StringBuilder result = new StringBuilder("");
         for (Test test : tests)
             result.append(TestRunner.result(code, test.getInput(), test.getOutput(), language));
@@ -91,21 +99,21 @@ public class Service {
 
     public void addUser(String nickname, String email, String role)
             throws IncorrectAttributeException {
-        if (!role.equals("admin") && !role.equals("participant"))
+        if (!roles.contains(role))
             throw new IncorrectAttributeException("Role", role);
 
         userRepo.save(new User(nickname, email, role, true));
     }
 
     public List<ScoreboardDto> getScoreboard() {
-        List<Long> problemsId = problemRepo.findAllId();
+        List<Long> problemsId = problemRepo.findAllIds();
         HashMap<Long, Integer> scoreboard = new HashMap<Long, Integer>();
         for (Long problemId : problemsId) {
-            long totalTests = testRepo.findNumberOfTestsById(problemId);
+            long totalTests = testRepo.findNumberOfTestsByProblemId(problemId);
             StringBuilder resultPattern = new StringBuilder("");
             for (int j = 0; j < totalTests; ++j)
                 resultPattern.append("Y");
-            List<Long> participantsWhoSolved = solutionRepo.findIdsWhoSolved(problemId, resultPattern.toString());
+            List<Long> participantsWhoSolved = solutionRepo.findIdsWhoSolvedByProblemId(problemId, resultPattern.toString());
             for (Long participantWhoSolved : participantsWhoSolved) {
                 int newScore;
                 if (scoreboard.containsKey(participantWhoSolved))
@@ -115,7 +123,7 @@ public class Service {
                 scoreboard.put(participantWhoSolved, newScore);
             }
         }
-        List<Long> usersId = userRepo.findAllParticipantsId();
+        List<Long> usersId = userRepo.findIdsForAllParticipants();
         List<ScoreboardDto> scoreboardDto = new ArrayList<ScoreboardDto>();
         for (Long userId : usersId) {
             int newScore;
