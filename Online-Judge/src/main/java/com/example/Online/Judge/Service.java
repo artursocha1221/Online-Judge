@@ -115,22 +115,20 @@ public class Service {
                 resultPattern.append("Y");
             List<Long> participantsWhoSolved = solutionRepo.findIdsWhoSolvedByProblemId(problemId, resultPattern.toString());
             for (Long participantWhoSolved : participantsWhoSolved) {
-                int newScore;
+                int newScore = 1;
                 if (scoreboard.containsKey(participantWhoSolved))
                     newScore = scoreboard.get(participantWhoSolved) + 1;
-                else
-                    newScore = 1;
                 scoreboard.put(participantWhoSolved, newScore);
             }
         }
         List<Long> usersId = userRepo.findIdsForAllParticipants();
         List<ScoreboardDto> scoreboardDto = new ArrayList<ScoreboardDto>();
         for (Long userId : usersId) {
-            int newScore;
+            if (!userRepo.isActiveById(userId))
+                continue;;
+            int newScore = 0;
             if (scoreboard.containsKey(userId))
                 newScore =  scoreboard.get(userId);
-            else
-                newScore = 0;
             scoreboardDto.add(new ScoreboardDto(userId, newScore));
         }
         scoreboardDto.sort(new ScoreboardComparator());
