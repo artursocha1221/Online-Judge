@@ -59,9 +59,9 @@ public class Controller {
 
     @PostMapping("/solution")
     public ResponseEntity<String> addSolution(@RequestBody SolutionDto solutionDto) {
-        response = CREATED;
         try {
-            service.addSolution(solutionDto.getCode(), solutionDto.getProblemId(), solutionDto.getUserId(), solutionDto.getLanguage());
+            response = new ResponseEntity<>(service.addSolution(solutionDto.getCode(), solutionDto.getProblemId(),
+                    solutionDto.getUserId(), solutionDto.getLanguage()), HttpStatus.CREATED);
         } catch (NoEntityException e) {
             response = NOT_FOUND;
             System.out.println(e.getMessage());
@@ -89,6 +89,6 @@ public class Controller {
 
     @GetMapping("/scoreboard")
     public ResponseEntity<List<ScoreboardDto>> getScoreboard() {
-        return new ResponseEntity<List<ScoreboardDto>>(service.getScoreboard(), HttpStatus.OK);
+        return new ResponseEntity<>(service.getScoreboard(), HttpStatus.OK);
     }
 }

@@ -62,7 +62,7 @@ public class Service {
             throw new AccessDenied2Exception("test");
 
         testRepo.save(new Test(input, output, problemId, userId));
-        ArrayList<Solution> solutions = solutionRepo.findSolutionsByProblemId(problemId);
+        List<Solution> solutions = solutionRepo.findSolutionsByProblemId(problemId);
         for (Solution solution : solutions) {
             if (!userRepo.isActiveById(solution.getUserId()))
                 continue;
@@ -73,7 +73,7 @@ public class Service {
         }
     }
 
-    public void addSolution(String code, Long problemId, Long userId, String language)
+    public String addSolution(String code, Long problemId, Long userId, String language)
             throws NoEntityException, IncorrectAttributeException, AccessDenied2Exception {
         if (userRepo.findIdById(userId) == null)
             throw new NoEntityException("User", userId);
@@ -84,17 +84,18 @@ public class Service {
         if (!isExpectedRole(userId, "participant") || !userRepo.isActiveById(userId))
             throw new AccessDenied2Exception("solution");
 
-        ArrayList<Long> cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
+        List<Long> cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
         if (cheaterId.size() != 0) {
             userRepo.updateIsActiveById(cheaterId.get(0), false);
             userRepo.updateIsActiveById(userId, false);
             throw new AccessDenied2Exception("solution");
         }
-        ArrayList<Test> tests = testRepo.findTestsByProblemId(problemId);
+        List<Test> tests = testRepo.findTestsByProblemId(problemId);
         StringBuilder result = new StringBuilder("");
         for (Test test : tests)
             result.append(TestRunner.result(code, test.getInput(), test.getOutput(), language));
         solutionRepo.save(new Solution(code, problemId, userId, language, result.toString()));
+        return result.toString();
     }
 
     public void addUser(String nickname, String email, String role)
@@ -107,7 +108,7 @@ public class Service {
 
     public List<ScoreboardDto> getScoreboard() {
         List<Long> problemsId = problemRepo.findAllIds();
-        HashMap<Long, Integer> scoreboard = new HashMap<Long, Integer>();
+        Map<Long, Integer> scoreboard = new HashMap<>();
         for (Long problemId : problemsId) {
             long totalTests = testRepo.findNumberOfTestsByProblemId(problemId);
             StringBuilder resultPattern = new StringBuilder("");
@@ -122,7 +123,7 @@ public class Service {
             }
         }
         List<Long> usersId = userRepo.findIdsForAllParticipants();
-        List<ScoreboardDto> scoreboardDto = new ArrayList<ScoreboardDto>();
+        List<ScoreboardDto> scoreboardDto = new ArrayList<>();
         for (Long userId : usersId) {
             if (!userRepo.isActiveById(userId))
                 continue;;
