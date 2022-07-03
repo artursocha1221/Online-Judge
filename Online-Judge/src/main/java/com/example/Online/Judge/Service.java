@@ -84,9 +84,9 @@ public class Service {
         if (!isExpectedRole(userId, "participant") || !userRepo.isActiveById(userId))
             throw new AccessDenied2Exception("solution");
 
-        List<Long> cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
-        if (cheaterId.size() != 0) {
-            userRepo.updateIsActiveById(cheaterId.get(0), false);
+        Long cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
+        if (cheaterId != null) {
+            userRepo.updateIsActiveById(cheaterId, false);
             userRepo.updateIsActiveById(userId, false);
             throw new AccessDenied2Exception("solution");
         }
