@@ -14,4 +14,7 @@ public interface ProblemRepo extends CrudRepository<Problem, Long> {
 
     @Query("SELECT p.id FROM Problem p")
     ArrayList<Long> findAllIds();
+
+    @Query("SELECT p.statement FROM Problem p WHERE p.id = ?1")
+    String findStatementById(Long id);
 }

@@ -135,4 +135,11 @@ public class Service {
         scoreboardDto.sort(new ScoreboardComparator());
         return scoreboardDto;
     }
+
+    public String getProblem(Long problemId) throws NoEntityException {
+        String statememnt = problemRepo.findStatementById(problemId);
+        if (statememnt == null)
+            throw new NoEntityException("Problem", problemId);
+        return statememnt;
+    }
 }
