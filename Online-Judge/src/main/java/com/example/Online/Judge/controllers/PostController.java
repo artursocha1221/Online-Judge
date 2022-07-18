@@ -1,22 +1,23 @@
-package com.example.Online.Judge;
+package com.example.Online.Judge.controllers;
 
-import com.example.Online.Judge.dtos.*;
-import com.example.Online.Judge.exceptions.AccessDenied2Exception;
-import com.example.Online.Judge.exceptions.IncorrectAttributeException;
-import com.example.Online.Judge.exceptions.NoEntityException;
+import com.example.Online.Judge.dtos.ProblemDto;
+import com.example.Online.Judge.dtos.SolutionDto;
+import com.example.Online.Judge.dtos.TestDto;
+import com.example.Online.Judge.dtos.UserDto;
+import com.example.Online.Judge.exceptions.*;
+import com.example.Online.Judge.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class Controller {
+public class PostController {
     @Autowired
-    private Service service;
+    private PostService postService;
 
-    private final ResponseEntity<String> OK = new ResponseEntity<String>(HttpStatus.OK);
     private final ResponseEntity<String> CREATED = new ResponseEntity<String>(HttpStatus.CREATED);
     private final ResponseEntity<String> BAD_REQUEST = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
     private final ResponseEntity<String> FORBIDDEN = new ResponseEntity<String>(HttpStatus.FORBIDDEN);
@@ -28,7 +29,7 @@ public class Controller {
     public ResponseEntity<String> addProblem(@RequestBody ProblemDto problemDto) {
         response = CREATED;
         try {
-            service.addProblem(problemDto.getStatement(), problemDto.getUserId());
+            postService.addProblem(problemDto.getStatement(), problemDto.getUserId());
         } catch (NoEntityException e) {
             response = NOT_FOUND;
             System.out.println(e.getMessage());
@@ -43,7 +44,7 @@ public class Controller {
     public ResponseEntity<String> addTest(@RequestBody TestDto testDto) {
         response = CREATED;
         try {
-            service.addTest(testDto.getInput(), testDto.getOutput(), testDto.getProblemId(), testDto.getUserId());
+            postService.addTest(testDto.getInput(), testDto.getOutput(), testDto.getProblemId(), testDto.getUserId());
         } catch (NoEntityException e) {
             response = NOT_FOUND;
             System.out.println(e.getMessage());
@@ -57,7 +58,7 @@ public class Controller {
     @PostMapping("/solution")
     public ResponseEntity<String> addSolution(@RequestBody SolutionDto solutionDto) {
         try {
-            response = new ResponseEntity<>(service.addSolution(solutionDto.getCode(), solutionDto.getProblemId(),
+            response = new ResponseEntity<>(postService.addSolution(solutionDto.getCode(), solutionDto.getProblemId(),
                     solutionDto.getUserId(), solutionDto.getLanguage()), HttpStatus.CREATED);
         } catch (NoEntityException e) {
             response = NOT_FOUND;
@@ -76,25 +77,9 @@ public class Controller {
     public ResponseEntity<String> addUser(@RequestBody UserDto userDto) {
         response = CREATED;
         try {
-            service.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());
+            postService.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());
         } catch (IncorrectAttributeException e) {
             response = BAD_REQUEST;
-            System.out.println(e.getMessage());
-        }
-        return response;
-    }
-
-    @GetMapping("/scoreboard")
-    public ResponseEntity<List<ScoreboardDto>> getScoreboard() {
-        return new ResponseEntity<>(service.getScoreboard(), HttpStatus.OK);
-    }
-
-    @GetMapping("/problem/{id}")
-    public ResponseEntity<String> getProblem(@PathVariable Long id) {
-        ResponseEntity<String> response = new ResponseEntity<>("", HttpStatus.NOT_FOUND);
-        try {
-            response = new ResponseEntity<String>(service.getProblem(id), HttpStatus.OK);
-        } catch (NoEntityException e) {
             System.out.println(e.getMessage());
         }
         return response;
