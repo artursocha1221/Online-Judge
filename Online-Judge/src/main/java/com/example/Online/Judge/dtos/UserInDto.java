@@ -1,6 +1,6 @@
 package com.example.Online.Judge.dtos;
 
-public class UserDto {
+public class UserInDto {
     private String nickname;
     private String email;
     private String role;

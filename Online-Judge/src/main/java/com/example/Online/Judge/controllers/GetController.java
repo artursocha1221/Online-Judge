@@ -1,6 +1,6 @@
 package com.example.Online.Judge.controllers;
 
-import com.example.Online.Judge.dtos.ScoreboardDto;
+import com.example.Online.Judge.dtos.ScoreboardOutDto;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import com.example.Online.Judge.services.GetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class GetController {
     private GetService getService;
 
     @GetMapping("/scoreboard")
-    public ResponseEntity<List<ScoreboardDto>> getScoreboard() {
+    public ResponseEntity<List<ScoreboardOutDto>> getScoreboard() {
         return new ResponseEntity<>(getService.getScoreboard(), HttpStatus.OK);
     }
 

@@ -1,6 +1,6 @@
 package com.example.Online.Judge.dtos;
 
-public class SolutionDto {
+public class SolutionInDto {
     private String code;
     private Long problemId;
     private Long userId;

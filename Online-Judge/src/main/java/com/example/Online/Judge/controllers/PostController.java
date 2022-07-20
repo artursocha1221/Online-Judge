@@ -1,9 +1,9 @@
 package com.example.Online.Judge.controllers;
 
-import com.example.Online.Judge.dtos.ProblemDto;
-import com.example.Online.Judge.dtos.SolutionDto;
-import com.example.Online.Judge.dtos.TestDto;
-import com.example.Online.Judge.dtos.UserDto;
+import com.example.Online.Judge.dtos.ProblemInDto;
+import com.example.Online.Judge.dtos.SolutionInDto;
+import com.example.Online.Judge.dtos.TestInDto;
+import com.example.Online.Judge.dtos.UserInDto;
 import com.example.Online.Judge.exceptions.*;
 import com.example.Online.Judge.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class PostController {
     private ResponseEntity<String> response;
 
     @PostMapping("/problem")
-    public ResponseEntity<String> addProblem(@RequestBody ProblemDto problemDto) {
+    public ResponseEntity<String> addProblem(@RequestBody ProblemInDto problemDto) {
         response = CREATED;
         try {
             postService.addProblem(problemDto.getStatement(), problemDto.getUserId());
@@ -41,10 +41,10 @@ public class PostController {
     }
 
     @PostMapping("/test")
-    public ResponseEntity<String> addTest(@RequestBody TestDto testDto) {
+    public ResponseEntity<String> addTest(@RequestBody TestInDto testInDto) {
         response = CREATED;
         try {
-            postService.addTest(testDto.getInput(), testDto.getOutput(), testDto.getProblemId(), testDto.getUserId());
+            postService.addTest(testInDto.getInput(), testInDto.getOutput(), testInDto.getProblemId(), testInDto.getUserId());
         } catch (NoEntityException e) {
             response = NOT_FOUND;
             System.out.println(e.getMessage());
@@ -56,7 +56,7 @@ public class PostController {
     }
 
     @PostMapping("/solution")
-    public ResponseEntity<String> addSolution(@RequestBody SolutionDto solutionDto) {
+    public ResponseEntity<String> addSolution(@RequestBody SolutionInDto solutionDto) {
         try {
             response = new ResponseEntity<>(postService.addSolution(solutionDto.getCode(), solutionDto.getProblemId(),
                     solutionDto.getUserId(), solutionDto.getLanguage()), HttpStatus.CREATED);
@@ -74,7 +74,7 @@ public class PostController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<String> addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<String> addUser(@RequestBody UserInDto userDto) {
         response = CREATED;
         try {
             postService.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());

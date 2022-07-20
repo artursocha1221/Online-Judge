@@ -1,7 +1,7 @@
 package com.example.Online.Judge.services;
 
 import com.example.Online.Judge.ScoreboardComparator;
-import com.example.Online.Judge.dtos.ScoreboardDto;
+import com.example.Online.Judge.dtos.ScoreboardOutDto;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import com.example.Online.Judge.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class GetService {
     @Autowired
     private UserRepo userRepo;
 
-    public List<ScoreboardDto> getScoreboard() {
+    public List<ScoreboardOutDto> getScoreboard() {
         List<Long> problemsId = problemRepo.findAllIds();
         Map<Long, Integer> scoreboard = new HashMap<>();
         for (Long problemId : problemsId) {
@@ -40,14 +40,14 @@ public class GetService {
             }
         }
         List<Long> usersId = userRepo.findIdsForAllParticipants();
-        List<ScoreboardDto> scoreboardDto = new ArrayList<>();
+        List<ScoreboardOutDto> scoreboardDto = new ArrayList<>();
         for (Long userId : usersId) {
             if (!userRepo.isActiveById(userId))
                 continue;;
             int newScore = 0;
             if (scoreboard.containsKey(userId))
                 newScore =  scoreboard.get(userId);
-            scoreboardDto.add(new ScoreboardDto(userId, newScore));
+            scoreboardDto.add(new ScoreboardOutDto(userId, newScore));
         }
         scoreboardDto.sort(new ScoreboardComparator());
         return scoreboardDto;
