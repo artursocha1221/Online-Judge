@@ -1,6 +1,8 @@
 package com.example.Online.Judge.controllers;
 
 import com.example.Online.Judge.dtos.ScoreboardOutDto;
+import com.example.Online.Judge.dtos.TestOutDto;
+import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import com.example.Online.Judge.services.GetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class GetController {
@@ -22,12 +24,29 @@ public class GetController {
         return new ResponseEntity<>(getService.getScoreboard(), HttpStatus.OK);
     }
 
-    @GetMapping("/problem/{id}")
-    public ResponseEntity<String> getProblem(@PathVariable Long id) {
-        ResponseEntity<String> response = new ResponseEntity<>("", HttpStatus.NOT_FOUND);
+    @GetMapping("/problem/{problemId}")
+    public ResponseEntity<String> getProblem(@PathVariable Long problemId) {
+        ResponseEntity<String> response;
         try {
-            response = new ResponseEntity<String>(getService.getProblem(id), HttpStatus.OK);
+            response = new ResponseEntity<String>(getService.getProblem(problemId), HttpStatus.OK);
         } catch (NoEntityException e) {
+            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.out.println(e.getMessage());
+        }
+        return response;
+    }
+
+    @GetMapping("/test/{problemId}/{userId}")
+    public ResponseEntity<List<TestOutDto>> getTests(@PathVariable Long problemId,
+                                                     @PathVariable Long userId) {
+        ResponseEntity<List<TestOutDto>> response;
+        try {
+            response = new ResponseEntity<>(getService.getTests(problemId, userId), HttpStatus.OK);
+        } catch (NoEntityException e) {
+            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.out.println(e.getMessage());
+        } catch (AccessDenied2Exception e) {
+            response = new ResponseEntity<>(HttpStatus.FORBIDDEN);
             System.out.println(e.getMessage());
         }
         return response;

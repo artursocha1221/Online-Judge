@@ -1,5 +1,6 @@
 package com.example.Online.Judge.repositories;
 
+import com.example.Online.Judge.dtos.TestOutDto;
 import com.example.Online.Judge.entities.Test;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

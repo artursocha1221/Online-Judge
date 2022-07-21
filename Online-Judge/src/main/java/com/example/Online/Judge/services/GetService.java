@@ -2,6 +2,8 @@ package com.example.Online.Judge.services;
 
 import com.example.Online.Judge.ScoreboardComparator;
 import com.example.Online.Judge.dtos.ScoreboardOutDto;
+import com.example.Online.Judge.dtos.TestOutDto;
+import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import com.example.Online.Judge.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,10 @@ public class GetService {
     @Autowired
     private UserRepo userRepo;
 
+    private boolean isExpectedRole(Long userId, String role) {
+        return userRepo.findRoleById(userId).equals(role);
+    }
+
     public List<ScoreboardOutDto> getScoreboard() {
         List<Long> problemsId = problemRepo.findAllIds();
         Map<Long, Integer> scoreboard = new HashMap<>();
@@ -43,7 +49,7 @@ public class GetService {
         List<ScoreboardOutDto> scoreboardDto = new ArrayList<>();
         for (Long userId : usersId) {
             if (!userRepo.isActiveById(userId))
-                continue;;
+                continue;
             int newScore = 0;
             if (scoreboard.containsKey(userId))
                 newScore =  scoreboard.get(userId);
@@ -53,10 +59,25 @@ public class GetService {
         return scoreboardDto;
     }
 
-    public String getProblem(Long problemId) throws NoEntityException {
+    public String getProblem(Long problemId)
+            throws NoEntityException {
         String statememnt = problemRepo.findStatementById(problemId);
         if (statememnt == null)
             throw new NoEntityException("Problem", problemId);
         return statememnt;
+    }
+
+    public List<TestOutDto> getTests(Long problemId, Long userId)
+        throws AccessDenied2Exception, NoEntityException {
+        if (problemRepo.findIdById(problemId) == null)
+            throw new NoEntityException("Problem", problemId);
+        if (userRepo.findIdById(userId) == null)
+            throw new NoEntityException("User", userId);
+        if (!isExpectedRole(userId, "admin"))
+            throw new AccessDenied2Exception("test");
+
+        return testRepo.findTestsByProblemId(problemId).stream()
+                .map(t -> new TestOutDto(t.getInput(), t.getOutput()))
+                .toList();
     }
 }

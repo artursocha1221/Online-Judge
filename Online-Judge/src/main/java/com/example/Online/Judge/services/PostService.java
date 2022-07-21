@@ -32,7 +32,7 @@ public class PostService {
         roles.add("participant");
     }
 
-    boolean isExpectedRole(Long id, String role) {
+    private boolean isExpectedRole(Long id, String role) {
         return userRepo.findRoleById(id).equals(role);
     }
 
