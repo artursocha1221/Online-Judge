@@ -1,17 +1,22 @@
 package com.example.Online.Judge.dtos;
 
 public class ScoreboardOutDto {
+    private int rank;
     private Long userId;
     private int totalSolved;
 
     public ScoreboardOutDto() {
     }
 
-    public ScoreboardOutDto(Long userId, int totalSolved) {
+    public ScoreboardOutDto(int rank, Long userId, int totalSolved) {
+        this.rank = rank;
         this.userId = userId;
         this.totalSolved = totalSolved;
     }
 
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
     public void setUserId(Long userId) {
         this.userId = userId;
     }
@@ -19,6 +24,9 @@ public class ScoreboardOutDto {
         this.totalSolved = totalSolved;
     }
 
+    public int getRank() {
+        return rank;
+    }
     public Long getUserId() {
         return userId;
     }

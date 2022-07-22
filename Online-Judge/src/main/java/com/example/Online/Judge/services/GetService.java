@@ -53,9 +53,11 @@ public class GetService {
             int newScore = 0;
             if (scoreboard.containsKey(userId))
                 newScore =  scoreboard.get(userId);
-            scoreboardDto.add(new ScoreboardOutDto(userId, newScore));
+            scoreboardDto.add(new ScoreboardOutDto(-1, userId, newScore));
         }
         scoreboardDto.sort(new ScoreboardComparator());
+        for (int i = 0; i < scoreboardDto.size(); ++i)
+            scoreboardDto.get(i).setRank(i + 1);
         return scoreboardDto;
     }
 
