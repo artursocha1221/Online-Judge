@@ -21,6 +21,8 @@ public class PostService {
     private SolutionRepo solutionRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private FriendRepo friendRepo;
 
     private final Set<String> languages = new HashSet<>();
     private final Set<String> roles = new HashSet<>();
@@ -41,7 +43,7 @@ public class PostService {
         if (userRepo.findIdById(userId) == null)
             throw new NoEntityException("User", userId);
         if (!isExpectedRole(userId, "admin"))
-            throw new AccessDenied2Exception("problem");
+            throw new AccessDenied2Exception();
 
         problemRepo.save(new Problem(statement, userId));
     }
@@ -53,7 +55,7 @@ public class PostService {
         if (problemRepo.findIdById(problemId) == null)
             throw new NoEntityException("Problem", problemId);
         if (!isExpectedRole(userId, "admin"))
-            throw new AccessDenied2Exception("test");
+            throw new AccessDenied2Exception();
 
         testRepo.save(new Test(input, output, problemId, userId));
         List<Solution> solutions = solutionRepo.findSolutionsByProblemId(problemId);
@@ -76,13 +78,13 @@ public class PostService {
         if (!language.contains(language))
             throw new IncorrectAttributeException("Language", language);
         if (!isExpectedRole(userId, "participant") || !userRepo.isActiveById(userId))
-            throw new AccessDenied2Exception("solution");
+            throw new AccessDenied2Exception();
 
         Long cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
         if (cheaterId != null) {
             userRepo.updateIsActiveById(cheaterId, false);
             userRepo.updateIsActiveById(userId, false);
-            throw new AccessDenied2Exception("solution");
+            throw new AccessDenied2Exception();
         }
         List<Test> tests = testRepo.findTestsByProblemId(problemId);
         StringBuilder result = new StringBuilder("");
@@ -98,5 +100,17 @@ public class PostService {
             throw new IncorrectAttributeException("Role", role);
 
         userRepo.save(new User(nickname, email, role, true));
+    }
+
+    public void addFriend(Long userId, Long friendId)
+            throws NoEntityException, AccessDenied2Exception {
+        if (userRepo.findIdById(userId) == null)
+            throw new NoEntityException("User", userId);
+        if (userRepo.findIdById(friendId) == null)
+            throw new NoEntityException("User", friendId);
+        if (!isExpectedRole(userId, "participant") || !isExpectedRole(friendId, "participant"))
+            throw new AccessDenied2Exception();
+
+        friendRepo.save(new Friend(userId, friendId));
     }
 }

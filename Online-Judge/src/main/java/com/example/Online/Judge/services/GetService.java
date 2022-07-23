@@ -63,10 +63,10 @@ public class GetService {
 
     public String getProblem(Long problemId)
             throws NoEntityException {
-        String statememnt = problemRepo.findStatementById(problemId);
-        if (statememnt == null)
+        String statement = problemRepo.findStatementById(problemId);
+        if (statement == null)
             throw new NoEntityException("Problem", problemId);
-        return statememnt;
+        return statement;
     }
 
     public List<TestOutDto> getTests(Long problemId, Long userId)
@@ -76,7 +76,7 @@ public class GetService {
         if (userRepo.findIdById(userId) == null)
             throw new NoEntityException("User", userId);
         if (!isExpectedRole(userId, "admin"))
-            throw new AccessDenied2Exception("test");
+            throw new AccessDenied2Exception();
 
         return testRepo.findTestsByProblemId(problemId).stream()
                 .map(t -> new TestOutDto(t.getInput(), t.getOutput()))

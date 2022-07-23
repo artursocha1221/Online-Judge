@@ -1,9 +1,6 @@
 package com.example.Online.Judge.controllers;
 
-import com.example.Online.Judge.dtos.ProblemInDto;
-import com.example.Online.Judge.dtos.SolutionInDto;
-import com.example.Online.Judge.dtos.TestInDto;
-import com.example.Online.Judge.dtos.UserInDto;
+import com.example.Online.Judge.dtos.*;
 import com.example.Online.Judge.exceptions.*;
 import com.example.Online.Judge.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +77,21 @@ public class PostController {
             postService.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());
         } catch (IncorrectAttributeException e) {
             response = BAD_REQUEST;
+            System.out.println(e.getMessage());
+        }
+        return response;
+    }
+
+    @PostMapping("/friend")
+    public ResponseEntity<String> addFriend(@RequestBody FriendInDto friendInDto) {
+        response = CREATED;
+        try {
+            postService.addFriend(friendInDto.getUserId(), friendInDto.getFriendId());
+        } catch (NoEntityException e) {
+            response = NOT_FOUND;
+            System.out.println(e.getMessage());
+        } catch (AccessDenied2Exception e) {
+            response = FORBIDDEN;
             System.out.println(e.getMessage());
         }
         return response;
