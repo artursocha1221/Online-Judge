@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -20,8 +21,27 @@ public class GetController {
     private GetService getService;
 
     @GetMapping("/scoreboard")
-    public ResponseEntity<List<ScoreboardOutDto>> getScoreboard() {
-        return new ResponseEntity<>(getService.getScoreboard(), HttpStatus.OK);
+    public ResponseEntity<List<ScoreboardOutDto>> getScoreboardAll() {
+        try {
+            return new ResponseEntity<>(getService.getScoreboard(null, null), HttpStatus.OK);
+        } catch (Exception e) { }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/scoreboard/{userId}")
+    public ResponseEntity<List<ScoreboardOutDto>> getScoreboardUser(@PathVariable Long userId,
+                                                                    @RequestParam(required = false) Boolean friendsOnly) {
+        ResponseEntity<List<ScoreboardOutDto>> response;
+        try {
+            response = new ResponseEntity<>(getService.getScoreboard(userId, friendsOnly), HttpStatus.OK);
+        } catch (NoEntityException e) {
+            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.out.println(e.getMessage());
+        } catch (AccessDenied2Exception e) {
+            response = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            System.out.println(e.getMessage());
+        }
+        return response;
     }
 
     @GetMapping("/problem/{problemId}")

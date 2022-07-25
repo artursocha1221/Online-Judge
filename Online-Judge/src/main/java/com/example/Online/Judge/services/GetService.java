@@ -24,12 +24,22 @@ public class GetService {
     private SolutionRepo solutionRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private FriendRepo friendRepo;
 
     private boolean isExpectedRole(Long userId, String role) {
         return userRepo.findRoleById(userId).equals(role);
     }
 
-    public List<ScoreboardOutDto> getScoreboard() {
+    public List<ScoreboardOutDto> getScoreboard(Long userId, Boolean friendsOnly)
+            throws NoEntityException, AccessDenied2Exception {
+        if (userId != null) {
+            if (userRepo.findIdById(userId) == null)
+                throw new NoEntityException("User", userId);
+            if (!isExpectedRole(userId, "participant"))
+                throw new AccessDenied2Exception();
+        }
+
         List<Long> problemsId = problemRepo.findAllIds();
         Map<Long, Integer> scoreboard = new HashMap<>();
         for (Long problemId : problemsId) {
@@ -47,17 +57,24 @@ public class GetService {
         }
         List<Long> usersId = userRepo.findIdsForAllParticipants();
         List<ScoreboardOutDto> scoreboardDto = new ArrayList<>();
-        for (Long userId : usersId) {
-            if (!userRepo.isActiveById(userId))
+        for (Long userIdTemp : usersId) {
+            if (!userRepo.isActiveById(userIdTemp))
                 continue;
             int newScore = 0;
-            if (scoreboard.containsKey(userId))
-                newScore =  scoreboard.get(userId);
-            scoreboardDto.add(new ScoreboardOutDto(-1, userId, newScore));
+            if (scoreboard.containsKey(userIdTemp))
+                newScore =  scoreboard.get(userIdTemp);
+            scoreboardDto.add(new ScoreboardOutDto(-1, userIdTemp, newScore));
         }
         scoreboardDto.sort(new ScoreboardComparator());
         for (int i = 0; i < scoreboardDto.size(); ++i)
             scoreboardDto.get(i).setRank(i + 1);
+        if (friendsOnly != null && friendsOnly == true) {
+            scoreboardDto = scoreboardDto.stream().
+                    filter(s -> {
+                        return friendRepo.findIdByUserIdAndFriendId(userId, s.getUserId()) != null;
+                    })
+                    .toList();
+        }
         return scoreboardDto;
     }
 
@@ -79,7 +96,9 @@ public class GetService {
             throw new AccessDenied2Exception();
 
         return testRepo.findTestsByProblemId(problemId).stream()
-                .map(t -> new TestOutDto(t.getInput(), t.getOutput()))
+                .map(t -> {
+                    return new TestOutDto(t.getInput(), t.getOutput());
+                })
                 .toList();
     }
 }
