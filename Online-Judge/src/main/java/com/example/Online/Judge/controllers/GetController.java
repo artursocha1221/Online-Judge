@@ -20,55 +20,48 @@ public class GetController {
     @Autowired
     private GetService getService;
 
+    private final HttpStatus OK = HttpStatus.OK;
+    private final HttpStatus NOT_FOUND = HttpStatus.NOT_FOUND;
+    private final HttpStatus FORBIDDEN = HttpStatus.FORBIDDEN;
+
     @GetMapping("/scoreboard")
     public ResponseEntity<List<ScoreboardOutDto>> getScoreboardAll() {
         try {
-            return new ResponseEntity<>(getService.getScoreboard(null, null), HttpStatus.OK);
+            return new ResponseEntity<>(getService.getScoreboard(null, null), OK);
         } catch (Exception e) { }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return (new ExceptionHandler<List<ScoreboardOutDto>>("", OK)).handle();
     }
 
     @GetMapping("/scoreboard/{userId}")
     public ResponseEntity<List<ScoreboardOutDto>> getScoreboardUser(@PathVariable Long userId,
                                                                     @RequestParam(required = false) Boolean friendsOnly) {
-        ResponseEntity<List<ScoreboardOutDto>> response;
         try {
-            response = new ResponseEntity<>(getService.getScoreboard(userId, friendsOnly), HttpStatus.OK);
+            return new ResponseEntity<>(getService.getScoreboard(userId, friendsOnly), OK);
         } catch (NoEntityException e) {
-            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<List<ScoreboardOutDto>>(e.getMessage(), NOT_FOUND)).handle();
         } catch (AccessDenied2Exception e) {
-            response = new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<List<ScoreboardOutDto>>(e.getMessage(), FORBIDDEN)).handle();
         }
-        return response;
     }
 
     @GetMapping("/problem/{problemId}")
     public ResponseEntity<String> getProblem(@PathVariable Long problemId) {
-        ResponseEntity<String> response;
         try {
-            response = new ResponseEntity<String>(getService.getProblem(problemId), HttpStatus.OK);
+            return new ResponseEntity<>(getService.getProblem(problemId), OK);
         } catch (NoEntityException e) {
-            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), NOT_FOUND)).handle();
         }
-        return response;
     }
 
     @GetMapping("/test/{problemId}/{userId}")
     public ResponseEntity<List<TestOutDto>> getTests(@PathVariable Long problemId,
                                                      @PathVariable Long userId) {
-        ResponseEntity<List<TestOutDto>> response;
         try {
-            response = new ResponseEntity<>(getService.getTests(problemId, userId), HttpStatus.OK);
+            return new ResponseEntity<>(getService.getTests(problemId, userId), OK);
         } catch (NoEntityException e) {
-            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<List<TestOutDto>>(e.getMessage(), NOT_FOUND)).handle();
         } catch (AccessDenied2Exception e) {
-            response = new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<List<TestOutDto>>(e.getMessage(), FORBIDDEN)).handle();
         }
-        return response;
     }
 }

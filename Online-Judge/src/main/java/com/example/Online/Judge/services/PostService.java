@@ -100,6 +100,9 @@ public class PostService {
             throw new IncorrectAttributeException("Role", role);
 
         userRepo.save(new User(nickname, email, role, true));
+        Long newUserId = userRepo.findIdByEmail(email);
+        if (role.equals("participant"))
+            friendRepo.save(new Friend(newUserId, newUserId));
     }
 
     public void addFriend(Long userId, Long friendId)

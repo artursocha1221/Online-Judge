@@ -15,85 +15,68 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    private final ResponseEntity<String> CREATED = new ResponseEntity<String>(HttpStatus.CREATED);
-    private final ResponseEntity<String> BAD_REQUEST = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-    private final ResponseEntity<String> FORBIDDEN = new ResponseEntity<String>(HttpStatus.FORBIDDEN);
-    private final ResponseEntity<String> NOT_FOUND = new ResponseEntity<String>(HttpStatus.NOT_FOUND);
-
-    private ResponseEntity<String> response;
+    private final HttpStatus CREATED = HttpStatus.CREATED;
+    private final HttpStatus BAD_REQUEST = HttpStatus.BAD_REQUEST;
+    private final HttpStatus FORBIDDEN = HttpStatus.FORBIDDEN;
+    private final HttpStatus NOT_FOUND = HttpStatus.NOT_FOUND;
 
     @PostMapping("/problem")
     public ResponseEntity<String> addProblem(@RequestBody ProblemInDto problemDto) {
-        response = CREATED;
         try {
             postService.addProblem(problemDto.getStatement(), problemDto.getUserId());
+            return new ResponseEntity<>(CREATED);
         } catch (NoEntityException e) {
-            response = NOT_FOUND;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), NOT_FOUND)).handle();
         } catch (AccessDenied2Exception e) {
-            response = FORBIDDEN;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), FORBIDDEN)).handle();
         }
-        return response;
     }
 
     @PostMapping("/test")
     public ResponseEntity<String> addTest(@RequestBody TestInDto testInDto) {
-        response = CREATED;
         try {
             postService.addTest(testInDto.getInput(), testInDto.getOutput(), testInDto.getProblemId(), testInDto.getUserId());
+            return new ResponseEntity<>(CREATED);
         } catch (NoEntityException e) {
-            response = NOT_FOUND;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), NOT_FOUND)).handle();
         } catch (AccessDenied2Exception e) {
-            response = FORBIDDEN;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), FORBIDDEN)).handle();
         }
-        return response;
     }
 
     @PostMapping("/solution")
     public ResponseEntity<String> addSolution(@RequestBody SolutionInDto solutionDto) {
         try {
-            response = new ResponseEntity<>(postService.addSolution(solutionDto.getCode(), solutionDto.getProblemId(),
-                    solutionDto.getUserId(), solutionDto.getLanguage()), HttpStatus.CREATED);
+            return new ResponseEntity<>(postService.addSolution(solutionDto.getCode(), solutionDto.getProblemId(),
+                    solutionDto.getUserId(), solutionDto.getLanguage()), CREATED);
         } catch (NoEntityException e) {
-            response = NOT_FOUND;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), NOT_FOUND)).handle();
         } catch (IncorrectAttributeException e) {
-            response = BAD_REQUEST;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), BAD_REQUEST)).handle();
         } catch (AccessDenied2Exception e) {
-            response = FORBIDDEN;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), FORBIDDEN)).handle();
         }
-        return response;
     }
 
     @PostMapping("/user")
     public ResponseEntity<String> addUser(@RequestBody UserInDto userDto) {
-        response = CREATED;
         try {
             postService.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());
+            return new ResponseEntity<>(CREATED);
         } catch (IncorrectAttributeException e) {
-            response = BAD_REQUEST;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), BAD_REQUEST)).handle();
         }
-        return response;
     }
 
     @PostMapping("/friend")
     public ResponseEntity<String> addFriend(@RequestBody FriendInDto friendInDto) {
-        response = CREATED;
         try {
             postService.addFriend(friendInDto.getUserId(), friendInDto.getFriendId());
+            return new ResponseEntity<>(CREATED);
         } catch (NoEntityException e) {
-            response = NOT_FOUND;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), NOT_FOUND)).handle();
         } catch (AccessDenied2Exception e) {
-            response = FORBIDDEN;
-            System.out.println(e.getMessage());
+            return (new ExceptionHandler<String>(e.getMessage(), FORBIDDEN)).handle();
         }
-        return response;
     }
 }

@@ -27,4 +27,7 @@ public interface UserRepo extends CrudRepository<User, Long> {
 
     @Query("SELECT u.id FROM User u WHERE u.role = 'participant'")
     ArrayList<Long> findIdsForAllParticipants();
+
+    @Query("SELECT u.id FROM User u WHERE u.email = ?1")
+    Long findIdByEmail(String email);
 }
