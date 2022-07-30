@@ -30,6 +30,12 @@ This request can be used only by participant.
 As a result you will receive an information whether your solution passed all tests or not.
 Example: `{"code": "#include <iostream>#include <vector>#include <algorithm>\r\nusing namespace std;int main(){int n;cin >> n;vector<int> a(n);for (int i = 0; i < n; ++i)cin >> a[i];reverse(a.begin(), a.end());for (int i = 0; i < n; ++i)cout << a[i] << endl;return 0;}", "problemID": 1, "userId": 1, "language": "cpp"}`
 
+- `POST /friend`
+This request adds a new friend to some particular user.
+Request body should contain JSON with user id and friend id.
+This request can be used by participant. Friend also has to be participant.
+Example: `{"userId": 2, "friendId": 7}`
+
 - `GET /scoreboard`
 This request gives you a list of JSONs with user id and number of problems solved by the user. In case of a tie all participants with equal number of solved problems will be returned ascending by their id.
 
