@@ -20,6 +20,16 @@ public class PostController {
     private final HttpStatus FORBIDDEN = HttpStatus.FORBIDDEN;
     private final HttpStatus NOT_FOUND = HttpStatus.NOT_FOUND;
 
+    @PostMapping("/user")
+    public ResponseEntity<String> addUser(@RequestBody UserInDto userDto) {
+        try {
+            postService.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());
+            return new ResponseEntity<>(CREATED);
+        } catch (IncorrectAttributeException e) {
+            return (new ExceptionHandler<String>(e.getMessage(), BAD_REQUEST)).handle();
+        }
+    }
+
     @PostMapping("/problem")
     public ResponseEntity<String> addProblem(@RequestBody ProblemInDto problemDto) {
         try {
@@ -55,16 +65,6 @@ public class PostController {
             return (new ExceptionHandler<String>(e.getMessage(), BAD_REQUEST)).handle();
         } catch (AccessDenied2Exception e) {
             return (new ExceptionHandler<String>(e.getMessage(), FORBIDDEN)).handle();
-        }
-    }
-
-    @PostMapping("/user")
-    public ResponseEntity<String> addUser(@RequestBody UserInDto userDto) {
-        try {
-            postService.addUser(userDto.getNickname(), userDto.getEmail(), userDto.getRole());
-            return new ResponseEntity<>(CREATED);
-        } catch (IncorrectAttributeException e) {
-            return (new ExceptionHandler<String>(e.getMessage(), BAD_REQUEST)).handle();
         }
     }
 

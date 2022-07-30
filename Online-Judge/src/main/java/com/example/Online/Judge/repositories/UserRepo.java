@@ -30,4 +30,7 @@ public interface UserRepo extends CrudRepository<User, Long> {
 
     @Query("SELECT u.id FROM User u WHERE u.email = ?1")
     Long findIdByEmail(String email);
+
+    @Query("SELECT u FROM User u")
+    ArrayList<User> findAll();
 }

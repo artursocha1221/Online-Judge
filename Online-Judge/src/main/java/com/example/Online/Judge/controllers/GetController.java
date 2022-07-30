@@ -2,6 +2,9 @@ package com.example.Online.Judge.controllers;
 
 import com.example.Online.Judge.dtos.ScoreboardOutDto;
 import com.example.Online.Judge.dtos.TestOutDto;
+import com.example.Online.Judge.dtos.UserInDto;
+import com.example.Online.Judge.dtos.UserOutDto;
+import com.example.Online.Judge.entities.User;
 import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import com.example.Online.Judge.services.GetService;
@@ -62,6 +65,17 @@ public class GetController {
             return (new ExceptionHandler<List<TestOutDto>>(e.getMessage(), NOT_FOUND)).handle();
         } catch (AccessDenied2Exception e) {
             return (new ExceptionHandler<List<TestOutDto>>(e.getMessage(), FORBIDDEN)).handle();
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<UserOutDto>> getUsers(@PathVariable Long userId) {
+        try {
+            return new ResponseEntity<>(getService.getUsers(userId), OK);
+        } catch (NoEntityException e) {
+            return (new ExceptionHandler<List<UserOutDto>>(e.getMessage(), NOT_FOUND)).handle();
+        } catch (AccessDenied2Exception e) {
+            return (new ExceptionHandler<List<UserOutDto>>(e.getMessage(), FORBIDDEN)).handle();
         }
     }
 }

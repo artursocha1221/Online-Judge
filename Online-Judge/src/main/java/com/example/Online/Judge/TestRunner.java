@@ -1,5 +1,7 @@
 package com.example.Online.Judge;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,11 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestRunner {
-    private static final String partPath = "C:\\Users\\Artur\\Desktop\\enviroment\\";
+    private static final String partPath;
     private static final Map<String, String> codeFile = new HashMap<>();
     private static final Map<String, String> startFile = new HashMap<>();
 
     static {
+        partPath = "C:\\Users\\Artur\\Desktop\\enviroment\\";
         codeFile.put("cpp", "code.cpp");
         codeFile.put("java", "Main.java");
         startFile.put("cpp", "cppstart.bat");

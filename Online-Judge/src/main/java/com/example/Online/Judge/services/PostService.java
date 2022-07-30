@@ -38,6 +38,17 @@ public class PostService {
         return userRepo.findRoleById(id).equals(role);
     }
 
+    public void addUser(String nickname, String email, String role)
+            throws IncorrectAttributeException {
+        if (!roles.contains(role))
+            throw new IncorrectAttributeException("Role", role);
+
+        userRepo.save(new User(nickname, email, role, true));
+        Long newUserId = userRepo.findIdByEmail(email);
+        if (role.equals("participant"))
+            friendRepo.save(new Friend(newUserId, newUserId));
+    }
+
     public void addProblem(String statement, Long userId)
             throws AccessDenied2Exception, NoEntityException {
         if (userRepo.findIdById(userId) == null)
@@ -92,17 +103,6 @@ public class PostService {
             result.append(TestRunner.result(code, test.getInput(), test.getOutput(), language));
         solutionRepo.save(new Solution(code, problemId, userId, language, result.toString()));
         return result.toString();
-    }
-
-    public void addUser(String nickname, String email, String role)
-            throws IncorrectAttributeException {
-        if (!roles.contains(role))
-            throw new IncorrectAttributeException("Role", role);
-
-        userRepo.save(new User(nickname, email, role, true));
-        Long newUserId = userRepo.findIdByEmail(email);
-        if (role.equals("participant"))
-            friendRepo.save(new Friend(newUserId, newUserId));
     }
 
     public void addFriend(Long userId, Long friendId)
