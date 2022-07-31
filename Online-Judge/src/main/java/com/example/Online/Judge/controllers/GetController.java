@@ -1,9 +1,6 @@
 package com.example.Online.Judge.controllers;
 
-import com.example.Online.Judge.dtos.ScoreboardOutDto;
-import com.example.Online.Judge.dtos.TestOutDto;
-import com.example.Online.Judge.dtos.UserInDto;
-import com.example.Online.Judge.dtos.UserOutDto;
+import com.example.Online.Judge.dtos.*;
 import com.example.Online.Judge.entities.User;
 import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.NoEntityException;
@@ -47,12 +44,12 @@ public class GetController {
         }
     }
 
-    @GetMapping("/problem/{problemId}")
-    public ResponseEntity<String> getProblem(@PathVariable Long problemId) {
+    @GetMapping("/problem")
+    public ResponseEntity<List<ProblemOutDto>> getProblems() {
         try {
-            return new ResponseEntity<>(getService.getProblem(problemId), OK);
+            return new ResponseEntity<>(getService.getProblems(), OK);
         } catch (NoEntityException e) {
-            return (new ExceptionHandler<String>(e.getMessage(), NOT_FOUND)).handle();
+            return (new ExceptionHandler<List<ProblemOutDto>>(e.getMessage(), NOT_FOUND)).handle();
         }
     }
 

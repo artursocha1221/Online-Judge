@@ -1,10 +1,7 @@
 package com.example.Online.Judge.services;
 
 import com.example.Online.Judge.ScoreboardComparator;
-import com.example.Online.Judge.dtos.ScoreboardOutDto;
-import com.example.Online.Judge.dtos.TestOutDto;
-import com.example.Online.Judge.dtos.UserInDto;
-import com.example.Online.Judge.dtos.UserOutDto;
+import com.example.Online.Judge.dtos.*;
 import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import com.example.Online.Judge.repositories.*;
@@ -80,12 +77,13 @@ public class GetService {
         return scoreboardDto;
     }
 
-    public String getProblem(Long problemId)
+    public List<ProblemOutDto> getProblems()
             throws NoEntityException {
-        String statement = problemRepo.findStatementById(problemId);
-        if (statement == null)
-            throw new NoEntityException("Problem", problemId);
-        return statement;
+        return problemRepo.findAllStatements().stream()
+                .map(p -> {
+                    return new ProblemOutDto(p);
+                })
+                .toList();
     }
 
     public List<TestOutDto> getTests(Long problemId, Long userId)
