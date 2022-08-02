@@ -33,10 +33,28 @@ Example: `{"code": "#include <iostream>#include <vector>#include <algorithm>\r\n
 - `POST /friend`
 This request adds a new friend to some particular user.
 Request body should contain JSON with user id and friend id.
-This request can be used by participant. Friend also has to be participant.
+This request can be used only by participant. Friend also has to be participant.
 Example: `{"userId": 2, "friendId": 7}`
 
+============================================================================================
+
 - `GET /scoreboard`
-This request gives you a list of JSONs with user id and number of problems solved by the user. In case of a tie all participants with equal number of solved problems will be returned ascending by their id.
+This request gives you a list of JSONs with user rank, user id and number of problems solved by the user. This list is sorted by number of problems solved by the user. In case of a tie all participants with equal number of solved problems will be returned ascending by their id.
+
+- `GET /scoreboard/userId?friendsOnly=true`
+This request gives you a list of JSONs with user rank, user id and number of problems solved by the user.
+This list contains only friends of userId and is sorted by number of problems solved by the user. In case of a tie all participants with equal number of solved problems will be returned ascending by their id.
+This request can be used only by participant.
+
+- `GET /user/userId`
+This request gives you a list of JSONs with nickname, email, role and information whether or not the user cheated.
+This request can be used only by admin.
+
+- `GET /problem`
+This request gives you a list of JSONs with problem statements.
+
+- `GET /test/problemId/userId`
+This request gives you a list of JSONs with input and output of tests to problemId.
+This request can be used only by admin.
 
 If two different participants send the same solution to the same problem they both will be disqualified from the contest and removed from the scoreboard.
