@@ -75,4 +75,13 @@ public class GetController {
             return (new ExceptionHandler<List<UserOutDto>>(e.getMessage(), FORBIDDEN)).handle();
         }
     }
+
+    @GetMapping("/solution/{userId}")
+    public ResponseEntity<List<SolutionOutDto>> getSolutions(@PathVariable Long userId) {
+        try {
+            return new ResponseEntity<>(getService.getSolutions(userId), OK);
+        } catch (NoEntityException e) {
+            return (new ExceptionHandler<List<SolutionOutDto>>(e.getMessage(), NOT_FOUND)).handle();
+        }
+    }
 }

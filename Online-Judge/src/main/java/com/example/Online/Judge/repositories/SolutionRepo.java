@@ -24,5 +24,11 @@ public interface SolutionRepo extends CrudRepository<Solution, Long> {
 
     @Query("SELECT s.userId FROM Solution s WHERE s.problemId = ?1 AND s.results = ?2 GROUP BY s.userId")
     ArrayList<Long> findIdsWhoSolvedByProblemId(Long problemId, String results);
+
+    @Query("SELECT s FROM Solution s")
+    ArrayList<Solution> findAllSolutions();
+
+    @Query("SELECT s FROM Solution s WHERE s.userId = ?1")
+    ArrayList<Solution> findSolutionsByUserId(Long userId);
 }
 

@@ -2,6 +2,7 @@ package com.example.Online.Judge.services;
 
 import com.example.Online.Judge.ScoreboardComparator;
 import com.example.Online.Judge.dtos.*;
+import com.example.Online.Judge.entities.Solution;
 import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import com.example.Online.Judge.repositories.*;
@@ -112,6 +113,23 @@ public class GetService {
         return userRepo.findAll().stream()
                 .map(u -> {
                     return new UserOutDto(u.getNickname(), u.getEmail(), u.getRole(), u.getIsActive());
+                })
+                .toList();
+    }
+
+    public List<SolutionOutDto> getSolutions(Long userId)
+        throws NoEntityException {
+        if (userRepo.findIdById(userId) == null)
+            throw new NoEntityException("User", userId);
+
+        ArrayList<Solution> solutions;
+        if (isExpectedRole(userId, "admin"))
+            solutions = solutionRepo.findAllSolutions();
+        else
+            solutions = solutionRepo.findSolutionsByUserId(userId);
+        return solutions.stream()
+                .map(s -> {
+                    return new SolutionOutDto(s.getCode(), s.getProblemId(), s.getUserId(), s.getLanguage(), s.getResults());
                 })
                 .toList();
     }
