@@ -57,4 +57,8 @@ This request gives you a list of JSONs with problem statements.
 This request gives you a list of JSONs with input and output of tests to problemId.
 This request can be used only by admin.
 
+- `GET /solution/userId`
+This request gives you a list of JSONs with code, problemId, userId, language and results.
+If userId is admin all solutions will be returned. Otherwise, there will be returned solutions sent by userId.
+
 If two different participants send the same solution to the same problem they both will be disqualified from the contest and removed from the scoreboard.
