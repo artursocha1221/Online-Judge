@@ -2,6 +2,30 @@
 
 ## This application gives you possibility of holding as well as participating in algorithmic contests.
 
+In order to run this application you have to:
+
+- install C++ and Java compiler
+- create enviroment folder and put its path to constant 'partPath' in TestRunner class
+- create cppstart.bat file inside enviroment folder and put there as follows:
+```
+if exist b.out del b.out
+g++ C:\Users\Artur\Desktop\enviroment\code.cpp -o C:\Users\Artur\Desktop\enviroment\code.exe
+cd C:\Users\Artur\Desktop\enviroment\
+code.exe < a.in > b.out
+del code.exe code.cpp a.in
+exit
+```
+- create javastart.bat file inside enviroment folder and put there as follows:
+```
+if exist b.out del b.out
+javac C:\Users\Artur\Desktop\enviroment\Main.java
+java -cp C:\Users\Artur\Desktop\enviroment Main < C:\Users\Artur\Desktop\enviroment\a.in > C:\Users\Artur\Desktop\enviroment\b.out
+cd C:\Users\Artur\Desktop\enviroment\
+del Main.java Main.class a.in
+exit
+```
+Path `C:\Users\Artur\Desktop\enviroment` should be replaced by path of your enviroment folder.
+
 List of endpoints you can use:
 
 - `POST /user`
@@ -35,8 +59,6 @@ This request adds a new friend to some particular user.
 Request body should contain JSON with user id and friend id.
 This request can be used only by participant. Friend also has to be participant.
 Example: `{"userId": 2, "friendId": 7}`
-
-============================================================================================
 
 - `GET /scoreboard`
 This request gives you a list of JSONs with user rank, user id and number of problems solved by the user. This list is sorted by number of problems solved by the user. In case of a tie all participants with equal number of solved problems will be returned ascending by their id.
