@@ -24,7 +24,7 @@ cd C:\Users\Artur\Desktop\enviroment\
 del Main.java Main.class a.in
 exit
 ```
-Path `C:\Users\Artur\Desktop\enviroment` should be replaced by path of your enviroment folder.
+Path `C:\Users\Artur\Desktop\enviroment` should be replaced with path of your enviroment folder.
 
 List of endpoints you can use:
 
