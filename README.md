@@ -26,6 +26,9 @@ exit
 ```
 Path `C:\Users\Artur\Desktop\enviroment` should be replaced with path of your enviroment folder.
 
+Judge is not white-space sensitive.
+It means if output should be a sequence of integers separated with a single space, judge will accept your solution even if integers will be saparated with any number of tabulators or end-of-line characters. 
+
 List of endpoints you can use:
 
 - `POST /user`
