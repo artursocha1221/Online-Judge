@@ -1,9 +1,6 @@
 package com.example.Online.Judge.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Problem {
@@ -13,11 +10,14 @@ public class Problem {
     private String statement;
     private Long userId;
 
+    @Transient
+    private final String clarification = "\nJudge is not white-space sensitive. For more details check README.";
+
     public Problem() {
     }
 
     public Problem(String statement, Long userId) {
-        this.statement = statement;
+        this.statement = statement + clarification;
         this.userId = userId;
     }
 
