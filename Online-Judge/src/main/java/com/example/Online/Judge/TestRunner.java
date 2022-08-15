@@ -52,7 +52,7 @@ public class TestRunner {
             fileWriter.write(content);
             fileWriter.close();
         } catch (IOException e) {
-            System.out.print("Write error");
+            System.out.print("Writing error");
         }
     }
 
@@ -67,7 +67,7 @@ public class TestRunner {
             }
             fileReader.close();
         } catch (IOException e) {
-            System.out.print("Read error");
+            System.out.print("Reading error");
         }
         return stringBuilder.toString();
     }
