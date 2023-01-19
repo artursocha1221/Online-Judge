@@ -46,11 +46,7 @@ public class GetController {
 
     @GetMapping("/problem")
     public ResponseEntity<List<ProblemOutDto>> getProblems() {
-        try {
-            return new ResponseEntity<>(getService.getProblems(), OK);
-        } catch (NoEntityException e) {
-            return (new ExceptionHandler<List<ProblemOutDto>>(e.getMessage(), NOT_FOUND)).handle();
-        }
+        return new ResponseEntity<>(getService.getProblems(), OK);
     }
 
     @GetMapping("/test/{problemId}/{userId}")

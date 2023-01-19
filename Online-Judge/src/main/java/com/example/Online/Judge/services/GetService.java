@@ -78,8 +78,7 @@ public class GetService {
         return scoreboardDto;
     }
 
-    public List<ProblemOutDto> getProblems()
-            throws NoEntityException {
+    public List<ProblemOutDto> getProblems() {
         return problemRepo.findAllStatements().stream()
                 .map(p -> {
                     return new ProblemOutDto(p);
