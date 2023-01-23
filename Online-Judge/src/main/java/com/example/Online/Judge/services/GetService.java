@@ -69,10 +69,8 @@ public class GetService {
         for (int i = 0; i < scoreboardDto.size(); ++i)
             scoreboardDto.get(i).setRank(i + 1);
         if (friendsOnly != null && friendsOnly == true) {
-            scoreboardDto = scoreboardDto.stream().
-                    filter(s -> {
-                        return friendRepo.findIdByUserIdAndFriendId(userId, s.getUserId()) != null;
-                    })
+            scoreboardDto = scoreboardDto.stream()
+                    .filter(s -> friendRepo.findIdByUserIdAndFriendId(userId, s.getUserId()) != null)
                     .toList();
         }
         return scoreboardDto;
@@ -80,9 +78,7 @@ public class GetService {
 
     public List<ProblemOutDto> getProblems() {
         return problemRepo.findAllStatements().stream()
-                .map(p -> {
-                    return new ProblemOutDto(p);
-                })
+                .map(p -> new ProblemOutDto(p))
                 .toList();
     }
 
@@ -96,9 +92,7 @@ public class GetService {
             throw new AccessDenied2Exception();
 
         return testRepo.findTestsByProblemId(problemId).stream()
-                .map(t -> {
-                    return new TestOutDto(t.getInput(), t.getOutput());
-                })
+                .map(t -> new TestOutDto(t.getInput(), t.getOutput()))
                 .toList();
     }
 
@@ -110,9 +104,7 @@ public class GetService {
             throw new AccessDenied2Exception();
 
         return userRepo.findAll().stream()
-                .map(u -> {
-                    return new UserOutDto(u.getNickname(), u.getEmail(), u.getRole(), u.getIsActive());
-                })
+                .map(u -> new UserOutDto(u.getNickname(), u.getEmail(), u.getRole(), u.getIsActive()))
                 .toList();
     }
 
@@ -127,9 +119,7 @@ public class GetService {
         else
             solutions = solutionRepo.findSolutionsByUserId(userId);
         return solutions.stream()
-                .map(s -> {
-                    return new SolutionOutDto(s.getCode(), s.getProblemId(), s.getUserId(), s.getLanguage(), s.getResults());
-                })
+                .map(s -> new SolutionOutDto(s.getCode(), s.getProblemId(), s.getUserId(), s.getLanguage(), s.getResults()))
                 .toList();
     }
 }
