@@ -6,11 +6,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Repository
 public interface ProblemRepo extends CrudRepository<Problem, Long> {
     @Query("SELECT p.id FROM Problem p WHERE p.id = ?1")
-    Long findIdById(Long id);
+    Optional<Long> findIdById(Long id);
 
     @Query("SELECT p.id FROM Problem p")
     ArrayList<Long> findAllIds();

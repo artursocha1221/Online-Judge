@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Repository
 public interface UserRepo extends CrudRepository<User, Long> {
@@ -23,7 +24,7 @@ public interface UserRepo extends CrudRepository<User, Long> {
     String findRoleById(Long id);
 
     @Query("SELECT u.id FROM User u WHERE u.id = ?1")
-    Long findIdById(Long id);
+    Optional<Long> findIdById(Long id);
 
     @Query("SELECT u.id FROM User u WHERE u.role = 'participant'")
     ArrayList<Long> findIdsForAllParticipants();

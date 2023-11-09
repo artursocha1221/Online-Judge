@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -51,8 +52,8 @@ public class PostService {
 
     public void addProblem(String statement, Long userId)
             throws AccessDenied2Exception, NoEntityException {
-        if (userRepo.findIdById(userId) == null)
-            throw new NoEntityException("User", userId);
+        userRepo.findIdById(userId)
+                .orElseThrow(() -> new NoEntityException("User", userId));
         if (!isExpectedRole(userId, "admin"))
             throw new AccessDenied2Exception();
 
@@ -61,10 +62,10 @@ public class PostService {
 
     public void addTest(String input, String output, Long problemId, Long userId)
             throws AccessDenied2Exception, NoEntityException {
-        if (userRepo.findIdById(userId) == null)
-            throw new NoEntityException("User", userId);
-        if (problemRepo.findIdById(problemId) == null)
-            throw new NoEntityException("Problem", problemId);
+        userRepo.findIdById(userId)
+                .orElseThrow(() -> new NoEntityException("User", userId));
+        problemRepo.findIdById(problemId)
+                   .orElseThrow(() -> new NoEntityException("Problem", problemId));
         if (!isExpectedRole(userId, "admin"))
             throw new AccessDenied2Exception();
 
@@ -82,18 +83,18 @@ public class PostService {
 
     public String addSolution(String code, Long problemId, Long userId, String language)
             throws NoEntityException, IncorrectAttributeException, AccessDenied2Exception {
-        if (userRepo.findIdById(userId) == null)
-            throw new NoEntityException("User", userId);
-        if (problemRepo.findIdById(problemId) == null)
-            throw new NoEntityException("Problem", problemId);
+        userRepo.findIdById(userId)
+                .orElseThrow(() -> new NoEntityException("User", userId));
+        problemRepo.findIdById(problemId)
+                .orElseThrow(() -> new NoEntityException("Problem", problemId));
         if (!language.contains(language))
             throw new IncorrectAttributeException("Language", language);
         if (!isExpectedRole(userId, "participant") || !userRepo.isActiveById(userId))
             throw new AccessDenied2Exception();
 
-        Long cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
-        if (cheaterId != null) {
-            userRepo.updateIsActiveById(cheaterId, false);
+        Optional<Long> cheaterId = solutionRepo.findCheater(code, problemId, userId, language);
+        if (cheaterId.isPresent()) {
+            userRepo.updateIsActiveById(cheaterId.get(), false);
             userRepo.updateIsActiveById(userId, false);
             throw new AccessDenied2Exception();
         }
@@ -107,10 +108,10 @@ public class PostService {
 
     public void addFriend(Long userId, Long friendId)
             throws NoEntityException, AccessDenied2Exception {
-        if (userRepo.findIdById(userId) == null)
-            throw new NoEntityException("User", userId);
-        if (userRepo.findIdById(friendId) == null)
-            throw new NoEntityException("User", friendId);
+        userRepo.findIdById(userId)
+                .orElseThrow(() -> new NoEntityException("User", userId));
+        userRepo.findIdById(friendId)
+                .orElseThrow(() -> new NoEntityException("User", friendId));
         if (!isExpectedRole(userId, "participant") || !isExpectedRole(friendId, "participant"))
             throw new AccessDenied2Exception();
 
