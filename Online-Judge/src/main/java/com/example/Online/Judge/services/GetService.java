@@ -7,25 +7,33 @@ import com.example.Online.Judge.exceptions.AccessDenied2Exception;
 import com.example.Online.Judge.exceptions.NoEntityException;
 import com.example.Online.Judge.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class GetService {
+    private final ProblemRepo problemRepo;
+    private final TestRepo testRepo;
+    private final SolutionRepo solutionRepo;
+    private final UserRepo userRepo;
+    private final FriendRepo friendRepo;
+
     @Autowired
-    private ProblemRepo problemRepo;
-    @Autowired
-    private TestRepo testRepo;
-    @Autowired
-    private SolutionRepo solutionRepo;
-    @Autowired
-    private UserRepo userRepo;
-    @Autowired
-    private FriendRepo friendRepo;
+    public GetService(ProblemRepo problemRepo,
+                      TestRepo testRepo,
+                      SolutionRepo solutionRepo,
+                      UserRepo userRepo,
+                      FriendRepo friendRepo) {
+        this.problemRepo = problemRepo;
+        this.testRepo = testRepo;
+        this.solutionRepo = solutionRepo;
+        this.userRepo = userRepo;
+        this.friendRepo = friendRepo;
+    }
 
     private boolean isExpectedRole(Long userId, String role) {
         return userRepo.findRoleById(userId).equals(role);

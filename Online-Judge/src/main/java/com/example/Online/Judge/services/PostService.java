@@ -5,34 +5,40 @@ import com.example.Online.Judge.entities.*;
 import com.example.Online.Judge.exceptions.*;
 import com.example.Online.Judge.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@Component
+@Service
 public class PostService {
-    @Autowired
-    private ProblemRepo problemRepo;
-    @Autowired
-    private TestRepo testRepo;
-    @Autowired
-    private SolutionRepo solutionRepo;
-    @Autowired
-    private UserRepo userRepo;
-    @Autowired
-    private FriendRepo friendRepo;
+    private final ProblemRepo problemRepo;
+    private final TestRepo testRepo;
+    private final SolutionRepo solutionRepo;
+    private final UserRepo userRepo;
+    private final FriendRepo friendRepo;
 
     private final Set<String> languages = new HashSet<>();
     private final Set<String> roles = new HashSet<>();
 
-    PostService() {
+    @Autowired
+    public PostService(ProblemRepo problemRepo,
+                      TestRepo testRepo,
+                      SolutionRepo solutionRepo,
+                      UserRepo userRepo,
+                      FriendRepo friendRepo) {
         languages.add("java");
         languages.add("cpp");
         roles.add("admin");
         roles.add("participant");
+
+        this.problemRepo = problemRepo;
+        this.testRepo = testRepo;
+        this.solutionRepo = solutionRepo;
+        this.userRepo = userRepo;
+        this.friendRepo = friendRepo;
     }
 
     private boolean isExpectedRole(Long id, String role) {

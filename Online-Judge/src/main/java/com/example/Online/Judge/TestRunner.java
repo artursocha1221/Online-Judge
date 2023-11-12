@@ -1,7 +1,5 @@
 package com.example.Online.Judge;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
